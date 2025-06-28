@@ -9,3 +9,9 @@ tup-generate.vardict
 # Converted sprites
 *.[ac]sp
 *.[AC]SP
+
+# Include directory of C++4.0J
+c4j-include/ 
+
+# tmp files
+tmp/

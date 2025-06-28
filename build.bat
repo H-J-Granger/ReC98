@@ -1,5 +1,7 @@
 @echo off
 
+call build_copy_c4j.bat
+
 : Windows 9x doesn't support stderr redirection, and always sets ERRORLEVEL to
 : 2 if you attempt to do that, regardless of `tasm32`'s existence. NT properly
 : returns 9009 if not found, or 0 otherwise.
@@ -124,3 +126,5 @@ echo Done. Find the executables in the bin\ subdirectory.
 echo -------------------------------------------------------------------------------
 
 :eof
+
+call build_del_c4j.bat
