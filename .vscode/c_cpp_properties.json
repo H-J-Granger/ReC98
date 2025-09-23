@@ -3,6 +3,7 @@
     {
       "name": "Win32",
       "includePath": [
+        "${workspaceFolder}/c4j-include",
         "${workspaceFolder}/**"
       ],
       "cStandard": "c17",
@@ -13,7 +14,8 @@
         "near=",
         "far=",
         "pascal=",
-        "GAME=5"    // For th05
+        "GAME=1",    // For th01
+        "MASTER_MEDIUM",  // master.lib memory model
       ]
     }
   ],

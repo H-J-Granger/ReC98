@@ -25,6 +25,10 @@
 #include "th01/shiftjis/fns.hpp"
 #include "th01/shiftjis/op.hpp"
 
+#ifdef __INTELLISENSE__
+#include "planar.h"
+#endif 
+
 // Redundant copies of resident structure fields to static data
 // ------------------------------------------------------------
 

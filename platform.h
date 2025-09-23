@@ -8,8 +8,10 @@
 
 // __TURBOC__ is #define'd on both "Borland" and "Turbo" editions, unlike
 // __BORLANDC__, which is only #define'd on the former.
-#if defined(__TURBOC__) && defined(__MSDOS__)
+#if (defined(__TURBOC__) && defined(__MSDOS__)) || defined(__INTELLISENSE__)
+#ifndef __INTELLISENSE__  // Since Intellisense will treat bool as an exist type
 	typedef unsigned char bool;
+#endif
 	typedef int bool16;
 	#define false 0
 	#define  true 1
