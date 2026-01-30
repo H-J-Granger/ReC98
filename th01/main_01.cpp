@@ -359,7 +359,7 @@ void stage_entrance(int stage_id, const char* bg_fn, bool16 clear_vram_page_0)
 	stageobjs_init_and_render(stage_id); // rendered to page 0
 
 	if(first_stage_in_scene == true) {
-		graph_copy_accessed_page_to_other(); // 0 â†’ 1, with new stage objects
+		graph_copy_accessed_page_to_other(); // 0 â†? 1, with new stage objects
 	} else if(first_stage_in_scene == false) {
 		// ZUN bloat: This entire function would not have been necessary if ZUN
 		// just rendered the stage objects to page 1 and then always copied the
@@ -800,6 +800,7 @@ int main(void)
 
 			// Main gameplay loop
 			while(!player_is_hit) {
+				label_mirai_1:;
 				frame_rand++;
 				pellet_speed_raise_cycle = (
 					1800 - (rem_lives * 200) - (rem_bombs * 50)
@@ -907,7 +908,11 @@ int main(void)
 			resident->rand = frame_rand;
 			test_damage = false;
 			bomb_frames = 200;
+			#ifdef MIRAI_TH01_F1
+			if(stage_cleared) {
+			#else 
 			if((rem_lives <= 0) || stage_cleared) {
+			#endif 
 				break;
 			}
 
@@ -915,8 +920,18 @@ int main(void)
 			// here. Perform the necessary updates and animations and restart
 			// the life loop.
 			mdrv2_se_play(5);
+
+			#ifdef MIRAI_TH01_F1
+			player_is_hit = false;
+			goto label_mirai_1;
+			#endif 
+			
+			// #define MIRAI_TH01_F2
+			#ifndef MIRAI_TH01_F2
 			resident->rem_lives--;
 			rem_lives--;
+			#endif
+
 			player_miss_animate_and_update();
 			player_is_hit = false;
 			bgm_reload_and_play_if_0++;

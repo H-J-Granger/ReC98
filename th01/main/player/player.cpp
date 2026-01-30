@@ -431,8 +431,13 @@ void player_unput_update_render(bool16 do_not_reset_player_state)
 			bomb_state = BS_ACTIVE;
 			player_deflecting = true;
 			bombing = true;
+			// #define MIRAI_TH01_F3
+			#ifdef MIRAI_TH01_F3
+			hud_bombs_put(rem_bombs);
+			#else 
 			rem_bombs--;
 			hud_bombs_put(rem_bombs + 1);
+			#endif
 		}
 		orb_player_hittest(1);
 		bomb_done = bomb_update_and_render(bomb_frames);
@@ -955,8 +960,8 @@ void player_miss_animate_and_update(void)
 	// Miss sprite and shake
 	// ---------------------
 
-	// ZUN bug: This should have been the 48Ã—48 unblitting call that's done
-	// after the shake. It's easily possible to get hit during an 48Ã—48
+	// ZUN bug: This should have been the 48Ã?48 unblitting call that's done
+	// after the shake. It's easily possible to get hit during an 48Ã?48
 	// animation, which will end up leaving the extra pixels on screen during
 	// the next 16 frames.
 	ptn_sloppy_unput_16(player_left, player_top);
@@ -1029,7 +1034,10 @@ void player_miss_animate_and_update(void)
 	ptn_sloppy_unput_16(effect_left, player_top);
 	// ------
 
+	// #define MIRAI_TH01_F2
+	#ifndef MIRAI_TH01_F2
 	hud_lives_put(rem_lives + 1);
+	#endif
 
 	prev_bombs = rem_bombs;
 	rem_bombs = (bombs_extra_per_life_lost + rem_bombs);
