@@ -1,0 +1,39 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/lib/gcc/i386-pc-msdosdjgpp/14.2.0/include",
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/lib/gcc/i386-pc-msdosdjgpp/14.2.0/include/c++",
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/lib/gcc/i386-pc-msdosdjgpp/14.2.0/include/c++/i386-pc-msdosdjgpp",
+        "${workspaceFolder}/**",
+        // "${workspaceFolder}/3rdparty/json/include",
+        // "${workspaceFolder}/3rdparty/master.lib/include",
+        // "D:/ProgramFiles/Borland-TurboC++-4.0J-2/INCLUDE"
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/i386-pc-msdosdjgpp/headers"
+      ],
+      "compilerPath": "",
+      "defines": [
+        "__cdecl=",
+        "cdecl=",
+        "__far=",
+        "far=",
+        "__seg=",
+        "__near=",
+        "near=",
+        "__pascal=",
+        "pascal=",
+        "interrupt=",
+        "__STDC__=0",
+        "__TURBOC__=",
+        "__MSDOS__=",
+        "__SMALL__=",
+        "GAME=1"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "c++98",
+      "intelliSenseMode": "gcc-x86"
+    }
+  ],
+  "version": 4
+}
