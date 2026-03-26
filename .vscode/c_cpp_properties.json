@@ -1,0 +1,45 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/lib/gcc/i386-pc-msdosdjgpp/14.2.0/include",
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/lib/gcc/i386-pc-msdosdjgpp/14.2.0/include/c++",
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/lib/gcc/i386-pc-msdosdjgpp/14.2.0/include/c++/i386-pc-msdosdjgpp",
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/libs/master.lib/",
+        "D:/ProgramFiles/Borland-TurboC++-4.0J-2/INCLUDE"
+        // "D:/ProgramFiles/msys64/usr/local/MinGW64/djgpp2.05-gcc14.2-pc98/i386-pc-msdosdjgpp/headers"
+      ],
+      "compilerPath": "",
+      "defines": [
+        "__cdecl=",
+        "cdecl=",
+        "__far=",
+        "far=",
+        "__seg=",
+        "__near=",
+        "near=",
+        "__pascal=",
+        "pascal=",
+        "interrupt=",
+        "__STDC__=0",
+        "ANCIENT_CXX=1",
+        "_DS=0",
+        "uint8_t=unsigned char",
+        "int8_t=signed char",
+        "uint16_t=unsigned int",
+        "int16_t=signed int",
+        "uint32_t=unsigned long",
+        "int32_t=signed long",
+        "bool16=unsigned int",
+        "GAME=3",
+        "MASTER_RET="
+      ],
+      "cStandard": "c17",
+      "cppStandard": "c++98",
+      "intelliSenseMode": "gcc-x86"
+    }
+  ],
+  "version": 4
+}
