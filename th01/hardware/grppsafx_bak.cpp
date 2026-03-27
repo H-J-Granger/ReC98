@@ -28,10 +28,9 @@ pixel_t pascal text_extent(const shiftjis_t *str)
 	return ret;
 }
 
-// I have to define this for every game, since the GAME macro here 
-// seems to always be 1.
-// The extern "C" is for disabling the name mangling.
-extern "C" void far font_read_patched(font_glyph_t&, jis_t);
+#if (GAME == 3)
+extern void far font_read_patched(font_glyph_t&, jis_t);
+#endif
 
 void pascal graph_putsa_fx(
 	screen_x_t left, vram_y_t top, int16_t col_and_fx, const shiftjis_t *str
@@ -92,8 +91,12 @@ void pascal graph_putsa_fx(
 			str += sizeof(shiftjis_t);
 		}
 
-		font_read_patched(glyph, codepoint);
-
+		// #if (GAME == 13)
+		// font_read_patched(glyph, codepoint);
+		// #else 
+		font_read(glyph, codepoint);
+		// #endif
+		
 		bool fullwidth = (glyph.tag.w == GLYPH_FULL_W);
 		if((left + glyph.tag.w) > RES_X) {
 			break;

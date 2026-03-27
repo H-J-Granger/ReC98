@@ -7,6 +7,8 @@ GAME = 1
 
 include ReC98.inc
 
+DGROUP group SPANISH_TRANSLATION_TEXT
+
 ; ===========================================================================
 
 ; Segment type:	Pure code
@@ -72,4 +74,32 @@ include libs/master.lib/pal[bss].asm
 include libs/master.lib/fil[bss].asm
 include libs/master.lib/keystart[bss].asm
 
+
+SPANISH_TRANSLATION_TEXT	segment byte public 'BSS' use16
+	assume cs:SPANISH_TRANSLATION_TEXT
+
+public FONT_READ_PATCHED
+; Get the de-mangled C++ name by tdump -m 
+extern @FONT_READ$QM12FONT_GLYPH_TUI:proc  ; unused, I end up rewriting it
+
+FONT_READ_PATCHED proc far
+				push    bp
+				mov     bp, sp
+        mov     bx, word ptr [bp + 0Ah]
+        mov     cx, word ptr [bp + 08h]
+        mov     dx, word ptr [bp + 06h]
+        mov     ah, 14h 
+        int     21h
+        les     bx, [bp + 08h]
+        mov     al, byte ptr es:[bx + 01h]
+        shl     al, 03h
+        mov     byte ptr es:[bx + 01h], al
+        mov     al, byte ptr es:[bx]
+        shl     al, 03h
+        mov     byte ptr es:[bx], al
+        pop     bp
+        retf    06h
+FONT_READ_PATCHED endp 
+
+SPANISH_TRANSLATION_TEXT	ends
 	end

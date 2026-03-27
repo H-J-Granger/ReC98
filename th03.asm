@@ -44,6 +44,7 @@ include th03/formats/scoredat.inc
 	extern _hflip_lut_generate:proc
 
 group_01 group CFG_LRES_TEXT, MAINL_SC_TEXT, CUTSCENE_TEXT, SCOREDAT_TEXT, REGIST_TEXT, STAFF_TEXT, mainl_03_TEXT
+DGROUP group SPANISH_TRANSLATION_TEXT
 
 ; ===========================================================================
 
@@ -2748,4 +2749,123 @@ playchar_10BD7	db ?
 _skill	db ?
 		db    ?	;
 
+SPANISH_TRANSLATION_TEXT	segment byte public 'BSS' use16
+	assume cs:SPANISH_TRANSLATION_TEXT
+
+public FONT_READ_PATCHED
+public _uppercase_n_tilde_glyph
+public _lowercase_n_tilde_glyph
+; Get the de-mangled C++ name by tdump -m 
+extern @FONT_READ$QM12FONT_GLYPH_TUI:proc  ; unused, I end up rewriting it
+
+_glyph_array label word
+        dw offset _uppercase_n_tilde_glyph
+        dw offset _lowercase_n_tilde_glyph
+        dw 14 dup (0)
+
+; _uppercase_n_tilde_glyph label byte
+;         db 00011001b
+;         db 00100110b
+;         db 00000000b
+;         db 01000001b
+;         db 01100001b
+;         db 01010001b
+;         db 01010001b
+;         db 01001001b
+;         db 01001001b
+;         db 01000101b
+;         db 01000101b
+;         db 01000011b
+;         db 01000001b
+;         db 01000001b
+;         db 00000000b
+;         db 00000000b
+
+_uppercase_n_tilde_glyph label byte
+        db 00110010b
+        db 01001100b
+        db 00000000b
+        db 01000010b
+        db 01100010b
+        db 01100010b
+        db 01010010b
+        db 01010010b
+        db 01010010b
+        db 01001010b
+        db 01001010b
+        db 01000110b
+        db 01000110b
+        db 01000010b
+        db 00000000b
+        db 00000000b
+
+_lowercase_n_tilde_glyph label byte
+        db 00000000b
+        db 00000000b
+        db 00110010b
+        db 01001100b
+        db 00000000b
+        db 01011000b
+        db 01100100b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00000000b
+        db 00000000b
+
+FONT_READ_PATCHED proc far
+        push    bp
+
+        mov     bp, sp
+        mov     bx, word ptr [bp + 0Ah]
+        mov     cx, word ptr [bp + 08h]
+        mov     dx, word ptr [bp + 06h]
+        mov     ax, dx
+        and     ax, 0FFE0h
+        cmp     ax, 2A40h  
+        je      @@accent_letter_handling
+        mov     ah, 14h 
+        int     18h
+        les     bx, [bp + 08h]
+        mov     al, byte ptr es:[bx + 01h]
+        shl     al, 03h
+        mov     byte ptr es:[bx + 01h], al
+        mov     al, byte ptr es:[bx]
+        shl     al, 03h
+        mov     byte ptr es:[bx], al
+        jmp     @@return
+
+@@accent_letter_handling:
+        push    di
+        ; dx = codepoint
+        and     dx, 0Fh
+        mov     di, offset _glyph_array
+        add     di, dx
+        add     di, dx
+        mov     di, word ptr cs:[di]  ; di = glyph offset
+        les     bx, [bp + 08h]
+        mov     byte ptr es:[bx], 10h  ; glyph height in pixels
+        mov     byte ptr es:[bx + 01h], 08h  ; glyph width in pixels
+        mov     cx, 0
+        add     bx, 2
+@@copy_glyph_loop:
+        mov     al, byte ptr cs:[di]
+        mov     byte ptr es:[bx], al
+        inc     bx
+        inc     di
+        inc     cx
+        cmp     cx, 10h
+        jne     @@copy_glyph_loop
+        pop     di
+
+@@return:
+        pop     bp
+        retf    06h
+FONT_READ_PATCHED endp 
+
+SPANISH_TRANSLATION_TEXT	ends
 		end

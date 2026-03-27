@@ -13,6 +13,7 @@ include th02/th02.inc
 	extern @GRPSURFACE_BLITBACKGROUNDPI$QN29%PALETTE$T16%RGB$TUC$II$256%%NXC:proc
 
 maine_01 group END_TEXT, maine_01_TEXT
+DGROUP group SPANISH_TRANSLATION_TEXT
 
 ; ===========================================================================
 
@@ -360,4 +361,31 @@ include th02/snd/snd[bss].asm
 include th02/snd/load[bss].asm
 extern _resident:dword
 
+SPANISH_TRANSLATION_TEXT	segment byte public 'BSS' use16
+	assume cs:SPANISH_TRANSLATION_TEXT
+
+public FONT_READ_PATCHED
+; Get the de-mangled C++ name by tdump -m 
+extern @FONT_READ$QM12FONT_GLYPH_TUI:proc  ; unused, I end up rewriting it
+
+FONT_READ_PATCHED proc far
+				push    bp
+				mov     bp, sp
+        mov     bx, word ptr [bp + 0Ah]
+        mov     cx, word ptr [bp + 08h]
+        mov     dx, word ptr [bp + 06h]
+        mov     ah, 14h 
+        int     21h
+        les     bx, [bp + 08h]
+        mov     al, byte ptr es:[bx + 01h]
+        shl     al, 03h
+        mov     byte ptr es:[bx + 01h], al
+        mov     al, byte ptr es:[bx]
+        shl     al, 03h
+        mov     byte ptr es:[bx], al
+        pop     bp
+        retf    06h
+FONT_READ_PATCHED endp 
+
+SPANISH_TRANSLATION_TEXT	ends
 		end
