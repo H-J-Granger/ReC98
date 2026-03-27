@@ -2761,25 +2761,25 @@ extern @FONT_READ$QM12FONT_GLYPH_TUI:proc  ; unused, I end up rewriting it
 _glyph_array label word
         dw offset _uppercase_n_tilde_glyph
         dw offset _lowercase_n_tilde_glyph
-        dw 14 dup (0)
-
-; _uppercase_n_tilde_glyph label byte
-;         db 00011001b
-;         db 00100110b
-;         db 00000000b
-;         db 01000001b
-;         db 01100001b
-;         db 01010001b
-;         db 01010001b
-;         db 01001001b
-;         db 01001001b
-;         db 01000101b
-;         db 01000101b
-;         db 01000011b
-;         db 01000001b
-;         db 01000001b
-;         db 00000000b
-;         db 00000000b
+        dw offset _uppercase_a_acute_glyph
+        dw offset _lowercase_a_acute_glyph
+        dw offset _uppercase_e_acute_glyph
+        dw offset _lowercase_e_acute_glyph
+        dw offset _uppercase_i_acute_glyph
+        dw offset _lowercase_i_acute_glyph
+        dw offset _uppercase_o_acute_glyph
+        dw offset _lowercase_o_acute_glyph
+        dw offset _uppercase_u_acute_glyph
+        dw offset _lowercase_u_acute_glyph
+        dw offset _uppercase_u_umlaut_glyph
+        dw offset _lowercase_u_umlaut_glyph
+        dw offset _uppercase_y_acute_glyph
+        dw offset _lowercase_y_acute_glyph
+        dw offset _inverted_exclamation_mark_glyph
+        dw offset _inverted_question_mark_glyph
+        dw offset _left_guillemets_glyph
+        dw offset _right_guillemets_glyph
+        dw 12 dup (0)
 
 _uppercase_n_tilde_glyph label byte
         db 00110010b
@@ -2801,9 +2801,9 @@ _uppercase_n_tilde_glyph label byte
 
 _lowercase_n_tilde_glyph label byte
         db 00000000b
-        db 00000000b
         db 00110010b
         db 01001100b
+        db 00000000b
         db 00000000b
         db 01011000b
         db 01100100b
@@ -2816,6 +2816,332 @@ _lowercase_n_tilde_glyph label byte
         db 01000010b
         db 00000000b
         db 00000000b
+
+_uppercase_a_acute_glyph label byte
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00011000b
+        db 00011000b
+        db 00100100b
+        db 00100100b
+        db 00100100b
+        db 00100100b
+        db 00111100b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00000000b
+        db 00000000b
+
+_lowercase_a_acute_glyph label byte
+        db 00000000b
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00000000b
+        db 00011000b
+        db 00100100b
+        db 01000010b
+        db 00011010b
+        db 00100110b
+        db 01000010b
+        db 01000010b
+        db 00100110b
+        db 00011010b
+        db 00000000b
+        db 00000000b
+        db 00000000b
+
+_uppercase_e_acute_glyph label byte
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 01111110b
+        db 01000000b
+        db 01000000b
+        db 01000000b
+        db 01000000b
+        db 01111100b
+        db 01000000b
+        db 01000000b
+        db 01000000b
+        db 01000000b
+        db 01111110b
+        db 00000000b
+        db 00000000b
+
+_lowercase_e_acute_glyph label byte
+        db 00000000b
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00000000b
+        db 00011000b
+        db 00100100b
+        db 01000010b
+        db 01000010b
+        db 01111110b
+        db 01000000b
+        db 01000000b
+        db 00100010b
+        db 00011100b
+        db 00000000b
+        db 00000000b
+
+_uppercase_i_acute_glyph label byte
+        db 00000110b
+        db 00011000b
+        db 00000000b
+        db 00011100b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00011100b
+        db 00000000b
+        db 00000000b
+
+_lowercase_i_acute_glyph label byte
+        db 00000000b
+        db 00000000b
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00000000b
+        db 00010000b
+        db 00010000b
+        db 00010000b
+        db 00010000b
+        db 00010000b
+        db 00010000b
+        db 00010000b
+        db 00010000b
+        db 00000000b
+        db 00000000b
+
+_uppercase_o_acute_glyph label byte
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00011000b
+        db 00100100b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100100b
+        db 00011000b
+        db 00000000b
+        db 00000000b
+
+_lowercase_o_acute_glyph label byte
+        db 00000000b
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00000000b
+        db 00011000b
+        db 00100100b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100100b
+        db 00011000b
+        db 00000000b
+        db 00000000b
+
+_uppercase_u_acute_glyph label byte
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100100b
+        db 00011000b
+        db 00000000b
+        db 00000000b
+
+_lowercase_u_acute_glyph label byte
+        db 00000000b
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00000000b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100110b
+        db 00011010b
+        db 00000000b
+        db 00000000b
+
+_uppercase_u_umlaut_glyph label byte
+        db 00100100b
+        db 00100100b
+        db 00000000b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100100b
+        db 00011000b
+        db 00000000b
+        db 00000000b
+
+_lowercase_u_umlaut_glyph label byte
+        db 00000000b
+        db 00100100b
+        db 00100100b
+        db 00000000b
+        db 00000000b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100110b
+        db 00011010b
+        db 00000000b
+        db 00000000b
+
+_uppercase_y_acute_glyph label byte
+        db 00000110b
+        db 00011000b
+        db 00000000b
+        db 01000001b
+        db 01000001b
+        db 01000001b
+        db 00100010b
+        db 00100010b
+        db 00010100b
+        db 00010100b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00000000b
+        db 00000000b
+
+_lowercase_y_acute_glyph label byte
+        db 00000000b
+        db 00001100b
+        db 00110000b
+        db 00000000b
+        db 00000000b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 01000100b
+        db 00100100b
+        db 00100100b
+        db 00011000b
+        db 00001000b
+        db 00010000b
+        db 00100000b
+        db 01000000b
+
+_inverted_exclamation_mark_glyph label byte
+        db 00000000b
+        db 00011000b
+        db 00011000b
+        db 00000000b
+        db 00000000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00000000b
+
+_inverted_question_mark_glyph label byte
+        db 00000000b
+        db 00011000b
+        db 00011000b
+        db 00000000b
+        db 00000000b
+        db 00001000b
+        db 00001000b
+        db 00001000b
+        db 00010000b
+        db 00100000b
+        db 01000010b
+        db 01000010b
+        db 01000010b
+        db 00100100b
+        db 00011000b
+        db 00000000b
+
+_left_guillemets_glyph label byte
+        db 00000000b
+        db 00000000b
+        db 00000000b
+        db 00000000b
+        db 00000000b
+        db 00010010b
+        db 00010010b
+        db 00100100b
+        db 00100100b
+        db 01001000b
+        db 00100100b
+        db 00100100b
+        db 00010010b
+        db 00010010b
+        db 00000000b
+        db 00000000b
+
+_right_guillemets_glyph label byte
+        db 00000000b
+        db 00000000b
+        db 00000000b
+        db 00000000b
+        db 00000000b
+        db 01001000b
+        db 01001000b
+        db 00100100b
+        db 00100100b
+        db 00010010b
+        db 00100100b
+        db 00100100b
+        db 01001000b
+        db 01001000b
+        db 00000000b
+        db 00000000b
+        
 
 FONT_READ_PATCHED proc far
         push    bp
@@ -2842,7 +3168,7 @@ FONT_READ_PATCHED proc far
 @@accent_letter_handling:
         push    di
         ; dx = codepoint
-        and     dx, 0Fh
+        and     dx, 1Fh
         mov     di, offset _glyph_array
         add     di, dx
         add     di, dx
