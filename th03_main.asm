@@ -37,6 +37,7 @@ GBA_BOSS_LEVEL_MAX = 16
 main_01 group PLAYFLD_TEXT, CFG_LRES_TEXT, HITCIRC_TEXT, HUD_STAT_TEXT, PLAYER_M_TEXT, main_010_TEXT, P_SHOT_TEXT
 main_04 group main_04_TEXT, COLLMAP_TEXT, ENEMY_PUT, E_EXPL_TEXT, PELLET_PUT, E_ENEMY_TEXT, HITBOX_TEXT, P_COMBO_TEXT, P_GAUGE_TEXT, ENEMY_2_TEXT, BULLET_TEXT, E_FIREB_TEXT
 main_06 group P_EXATT_TEXT, main_06_TEXT
+DGROUP group SPANISH_TRANSLATION_MAIN_TEXT
 
 ; ===========================================================================
 
@@ -7485,12 +7486,18 @@ loc_E411:
 		and	ax, 7
 		cmp	ax, 1
 		jnz	loc_E602
-		call	text_putsa pascal, si, 8, ds, offset aMAX_COMBO, TX_WHITE
-		call	text_putsa pascal, si, 10, ds, offset aGAUGE_ATTACK_TIMES, TX_WHITE
-		call	text_putsa pascal, si, 12, ds, offset aBOSS_ATTACK_TIMES, TX_WHITE
-		call	text_putsa pascal, si, 14, ds, offset aBOSS_REVERSAL_TIMES, TX_WHITE
-		call	text_putsa pascal, si, 16, ds, offset aBOSS_PANIC_TIMES, TX_WHITE
-		call	text_putsa pascal, si, 20, ds, offset aTOTAL, TX_WHITE
+		; call	text_putsa pascal, si, 8, ds, offset aMAX_COMBO, TX_WHITE
+		; call	text_putsa pascal, si, 10, ds, offset aGAUGE_ATTACK_TIMES, TX_WHITE
+		; call	text_putsa pascal, si, 12, ds, offset aBOSS_ATTACK_TIMES, TX_WHITE
+		; call	text_putsa pascal, si, 14, ds, offset aBOSS_REVERSAL_TIMES, TX_WHITE
+		; call	text_putsa pascal, si, 16, ds, offset aBOSS_PANIC_TIMES, TX_WHITE
+		; call	text_putsa pascal, si, 20, ds, offset aTOTAL, TX_WHITE
+		call	text_putsa_patched pascal, si, 8, ds, offset aMAX_COMBO, TX_WHITE
+		call	text_putsa_patched pascal, si, 10, ds, offset aGAUGE_ATTACK_TIMES, TX_WHITE
+		call	text_putsa_patched pascal, si, 12, ds, offset aBOSS_ATTACK_TIMES, TX_WHITE
+		call	text_putsa_patched pascal, si, 14, ds, offset aBOSS_REVERSAL_TIMES, TX_WHITE
+		call	text_putsa_patched pascal, si, 16, ds, offset aBOSS_PANIC_TIMES, TX_WHITE
+		call	text_putsa_patched pascal, si, 20, ds, offset aTOTAL, TX_WHITE
 		les	bx, _resident
 		cmp	es:[bx+resident_t.story_stage], 8
 		jnb	short loc_E48C
@@ -7502,7 +7509,8 @@ loc_E411:
 ; ---------------------------------------------------------------------------
 
 loc_E48C:
-		call	text_putsa pascal, si, 6, ds, offset aALL_CLEAR, TX_WHITE
+		; call	text_putsa pascal, si, 6, ds, offset aALL_CLEAR, TX_WHITE
+		call	text_putsa_patched pascal, si, 6, ds, offset aALL_CLEAR, TX_WHITE
 		push	si
 		push	18
 		push	ds
@@ -7510,7 +7518,8 @@ loc_E48C:
 
 loc_E4A2:
 		push	TX_WHITE
-		call	text_putsa
+		; call	text_putsa
+		call	text_putsa_patched
 		mov	ax, [bp+@@pid]
 		shl	ax, 7
 		add	ax, offset _players
@@ -30112,4 +30121,165 @@ bullet_template_t ends
 	extern _bullet_template:bullet_template_t
 	extern _ef_onehit:byte
 
+SPANISH_TRANSLATION_MAIN_TEXT	segment word public 'BSS' use16
+	assume cs:SPANISH_TRANSLATION_MAIN_TEXT
+        
+include libs/master.lib/text_putca.asm
+
+; my_text_putca proc near
+; arg @@attr:word, @@c:word, @@y:word, @@x:word
+;         push    es
+;         push    si
+;         push    ax
+;         push    dx
+        
+;         mov     ax, 0A000h
+;         mov     es, ax
+
+;         cmp     [@@c], 00FFh
+;         mov     
+;         jmp     @@return
+;         jg      @@print_kanji
+
+; @@print_kanji
+
+; @@return:
+;         pop     dx
+;         pop     ax
+;         pop     si
+;         pop     es
+;         ret
+; my_text_putca endp
+
+; Warning: This function doesn't function *exactly* the same as the text_putsa
+; function provided by master.lib, even if no gaiji characters are inquired to
+; print. 
+text_putsa_patched proc pascal far
+; arg @@attr:word, @@str_off:word, @@str_seg:word, @@y:word, @@x:word
+arg @@x:word, @@y:word, @@str_seg:word, @@str_off:word, @@attr:word
+local @@printing_kanji:word
+        push    es
+        push    si
+        push    ax
+        push    dx
+        push    di
+        push    bx
+
+        ; call    text_putca pascal, [@@x], [@@y], 'C', [@@attr]
+        ; call    text_putsa pascal, [@@x], [@@y], [@@str_seg], [@@str_off], [@@attr]
+        ; jmp     @@return
+@@L100:
+        jmp     @@L100
+
+        mov     [@@printing_kanji], 0        
+        mov     si, [@@str_off]
+@@main_loop:
+        mov     ax, [@@str_seg]
+        mov     es, ax
+        mov     al, es:[si]
+        cmp     al, 0
+        je      @@main_loop_break
+
+        ; If is currently printing a kanji, continue printing it
+        cmp     [@@printing_kanji], 1
+        jne     @@L1
+        mov     ah, es:[si - 1]
+        mov     al, es:[si]
+        dec     [@@x]  ; The @@x has been increased in the last pass
+        call    text_putca pascal, [@@x], [@@y], ax, [@@attr]
+        inc     [@@x]
+        mov     [@@printing_kanji], 0
+        jmp     @@main_loop_continue
+@@L1:
+        mov     ah, 00h
+        mov     al, es:[si]
+        ; Check whether this is the first byte of a kanji
+        sub     al, 81h
+        cmp     al, 09Fh - 081h
+        jae     @@L4
+        mov     [@@printing_kanji], 1
+        jmp     @@main_loop_continue
+@@L4:
+        sub     al, 0E0h - 081h
+        cmp     al, 0EFh - 0E0h
+        jae     @@L5
+        mov     [@@printing_kanji], 1
+        jmp     @@main_loop_continue
+@@L5:
+        mov     al, es:[si]
+        and     al, 0E0h
+        cmp     al, 0C0h
+        je      @@write_halfwidth_gaiji
+        ; Write normal characters
+        mov     ah, 00h
+        mov     al, es:[si]
+        call    text_putca pascal, [@@x], [@@y], ax, [@@attr]
+        jmp     @@main_loop_continue
+@@write_halfwidth_gaiji:
+        ; Write halfwidth gaiji
+        mov     ah, 00h
+        mov     al, es:[si]
+        and     al, 1Fh  ; ax = Special character no.
+        cmp     al, 20d
+        jl      @@L2
+        ; Only 20 gaiji slots are unused (The empty ones and the unused 
+        ; difficulty indicator). They are probably more, but I'll stick with 20
+        ; for now. The rest 12 characters will be printed as a halfwidth space.
+        call    text_putca pascal, [@@x], [@@y], ' ', [@@attr]
+        jmp     @@main_loop_continue
+@@L2:
+        ; Calculate TVRAM position, and set the attribute
+        mov     bl, al  ; temperarory save special characters id to bl
+        mov     ax, 0A200h
+        mov     es, ax
+        mov     ax, [@@y]
+        mov     dx, 160d
+        mul     dx
+        mov     di, ax
+        mov     ax, [@@x]
+        shl     ax, 1d
+        add     di, ax
+        mov     ax, [@@attr]
+        mov     es:[di], ax
+        mov     ax, 0A000h
+        mov     es, ax
+        ; Print gaiji characters according to the special characters no.
+        mov     ah, bl  ; Restore the special characters id to ah
+        mov     al, 0
+        cmp     ah, 6d
+        jge     @@L3
+        ; Special characters #00~05 are mapped to gaiji #155~159. (#9Bh~#9Fh)
+        ; Explanation of the immediates: Gaiji #80~#FF has JIS higher byte 77h,
+        ; and printing half-width kanji onto TVRAM requires a rotation of JIS 
+        ; code plus a -20h offset of the first byte.
+        add     ax, -0000h + 9B77h - 20h
+        mov     es:[di], ax
+        jmp     @@main_loop_continue
+@@L3:
+        cmp     ah, 13d
+        jge     @@L4
+        ; Special characters #06~12 are mapped to gaiji #249~255. (#F9h~#FFh)
+        add     ax, -0600h + 0F977h - 20h
+        mov     es:[di], ax
+        jmp     @@main_loop_continue
+        ; Special characters #13~19 are mapped to gaiji #232~239. (#E8h~#EFh)
+        add     ax, -0D00h + 0E877h - 20h
+        mov     es:[di], ax
+@@main_loop_continue:
+        inc     [@@x]
+        inc     si
+        jmp     @@main_loop
+@@main_loop_break:
+
+@@return:
+        pop     bx
+        pop     di
+        pop     dx
+        pop     ax
+        pop     si
+        pop     es
+        ret
+text_putsa_patched endp
+
+SPANISH_TRANSLATION_MAIN_TEXT ends
 		end

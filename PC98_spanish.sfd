@@ -44,7 +44,7 @@ AntiAlias: 1
 FitToEm: 0
 WinInfo: 0 32 13
 OnlyBitmaps: 1
-BeginChars: 256 14
+BeginChars: 256 22
 
 StartChar: Ntilde
 Encoding: 209 209 0
@@ -139,10 +139,66 @@ EndChar
 StartChar: Udieresis
 Encoding: 220 220 13
 Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: udieresis
+Encoding: 252 252 14
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: Yacute
+Encoding: 221 221 15
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: yacute
+Encoding: 253 253 16
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: exclamdown
+Encoding: 161 161 17
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: questiondown
+Encoding: 191 191 18
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: guillemotleft
+Encoding: 171 171 19
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: guillemotright
+Encoding: 187 187 20
+Width: 1000
+Flags: W
+LayerCount: 2
+EndChar
+
+StartChar: logicalnot
+Encoding: 172 172 21
+Width: 1000
 LayerCount: 2
 EndChar
 EndChars
-BitmapFont: 16 14 13 3 1
+BitmapFont: 16 22 13 3 1
 BDFChar: 0 209 16 9 14 -1 12
 A=*@M`5JIIUm.+&N._02
 BDFChar: 1 242 16 0 0 0 0
@@ -170,6 +226,22 @@ BDFChar: 11 218 16 9 14 -1 12
 BDFChar: 12 250 16 9 14 -1 11
 (gm=DKS5#3KS5"P1]RLU
 BDFChar: 13 220 16 9 14 -1 12
-(gmK"KS79sKRe`/82(#D
+84W`6KS5#3KS5#382(#D
+BDFChar: 14 252 16 9 14 -1 11
+84W^\KS5#3KS5"P1]RLU
+BDFChar: 15 221 16 9 15 -1 12
+$nq[5Jq?BY-n#W<&.egA
+BDFChar: 16 253 16 9 14 -3 11
+(gm=DKS5#784YEG+@(GW
+BDFChar: 17 161 16 11 12 -2 11
+^q]q85X7S"5X7S"5X5;L
+BDFChar: 18 191 16 9 14 -2 11
+0JEJ,&.fBq5_OfD82(#D
+BDFChar: 19 171 16 9 14 1 5
+,Y4"f,QIfE
+BDFChar: 20 187 16 9 14 1 5
+O@UWfO8o7\
+BDFChar: 21 172 16 0 0 0 0
+z
 EndBitmapFont
 EndSplineFont

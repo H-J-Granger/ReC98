@@ -75,7 +75,7 @@ void pascal graph_putsa_fx(
 		// downside.
 		// (Well, except that Neko Project's auto-generated default font
 		// renders the 0x29 row using these infamous hideous abominations of
-		// ASCII glyphs, making text look much worse as a result…)
+		// ASCII glyphs, making text look much worse as a result窶ｦ)
 		if(_ismbblead(str[0])) {
 			codepoint = _mbcjmstojis(((char)str[0] << 8) + str[1]);
 			str += sizeof(shiftjis_kanji_t);
@@ -93,6 +93,7 @@ void pascal graph_putsa_fx(
 		}
 
 		font_read_patched(glyph, codepoint);
+		// font_read(glyph, codepoint);
 
 		bool fullwidth = (glyph.tag.w == GLYPH_FULL_W);
 		if((left + glyph.tag.w) > RES_X) {
