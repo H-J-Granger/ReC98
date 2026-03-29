@@ -29626,15 +29626,24 @@ include th03/main/5_powers_of_10[data].asm
 		db  0Fh
 		db    0
 		db    7
-aMAX_COMBO	db 'ＭＡＸ　Ｃｏｍｂｏ　　　×',0
-aGAUGE_ATTACK_TIMES	db 'ゲージアタック回数　　　×',0
-aBOSS_ATTACK_TIMES	db 'ボスアタック回数　　　　×',0
-aBOSS_REVERSAL_TIMES	db 'ボスリバーサル回数　　　×',0
-aBOSS_PANIC_TIMES	db 'ボスパニック回数　　　　×',0
-aTOTAL	db '　　　ＴＯＴＡＬ　　　　　',0
-aWINNER_BONUS	db '　　ＷＩＮＮＥＲ　ＢＯＮＵＳ　　',0
-aALL_CLEAR	db '　　　ＡＬＬ　ＣＬＥＡＲ！！　　',0
-aPLAYER_REM	db '残り人数　　　　　　　　×',0
+; aMAX_COMBO	db 'ＭＡＸ　Ｃｏｍｂｏ　　　×',0
+; aGAUGE_ATTACK_TIMES	db 'ゲージアタック回数　　　×',0
+; aBOSS_ATTACK_TIMES	db 'ボスアタック回数　　　　×',0
+; aBOSS_REVERSAL_TIMES	db 'ボスリバーサル回数　　　×',0
+; aBOSS_PANIC_TIMES	db 'ボスパニック回数　　　　×',0
+; aTOTAL	db '　　　ＴＯＴＡＬ　　　　　',0
+; aWINNER_BONUS	db '　　ＷＩＮＮＥＲ　ＢＯＮＵＳ　　',0
+; aALL_CLEAR	db '　　　ＡＬＬ　ＣＬＥＡＲ！！　　',0
+; aPLAYER_REM	db '残り人数　　　　　　　　×',0
+aMAX_COMBO              db 'Combo mﾃximo            ×',0
+aGAUGE_ATTACK_TIMES     db 'Ataques de carga        ×',0
+aBOSS_ATTACK_TIMES      db 'Ataques de jefe         ×',0
+aBOSS_REVERSAL_TIMES    db 'Giro de Jefe            ×',0
+aBOSS_PANIC_TIMES       db 'Jefe de pﾃnico          ×',0
+aTOTAL                  db 'Total                     ',0
+aWINNER_BONUS           db '       Bonus de Victoria        ',0
+aALL_CLEAR              db '     ＣＯＭＰＬＥＴＡＤＯ！！   ',0
+aPLAYER_REM             db 'Vidas restantes         ×',0
 	evendata
 include th03/sprites/pellet.asp
 		db    1
@@ -30168,8 +30177,6 @@ local @@printing_kanji:word
         ; call    text_putca pascal, [@@x], [@@y], 'C', [@@attr]
         ; call    text_putsa pascal, [@@x], [@@y], [@@str_seg], [@@str_off], [@@attr]
         ; jmp     @@return
-@@L100:
-        jmp     @@L100
 
         mov     [@@printing_kanji], 0        
         mov     si, [@@str_off]
