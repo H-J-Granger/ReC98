@@ -435,7 +435,7 @@ sub_990C	endp
 
 ; Attributes: bp-based frame
 
-sub_9A2C	proc near
+sub_9A2C	proc near  ; 161E:0E5F
 
 var_4		= word ptr -4
 @@dec_bgm_fn	= word ptr -2
@@ -468,18 +468,24 @@ loc_9A8E:
 		sar	ax, 1
 		add	ax, ax
 		mov	[bp+var_4], ax
-		push	(80 shl 16) or 292
-		push	(V_WHITE or FX_WEIGHT_BOLD)
-		mov	bx, [bp+var_4]
-		shl	bx, 2
-		pushd	CHAR_TITLE[bx]
-		call	@graph_putsa_fx$qiiinxuc
-		push	(128 shl 16) or 308
-		push	(V_WHITE or FX_WEIGHT_BOLD)
-		mov	bx, [bp+var_4]
-		shl	bx, 2
-		pushd	CHAR_NAME[bx]
-		call	@graph_putsa_fx$qiiinxuc
+
+                push    0
+                call    print_title_and_name
+                add     sp, 2
+                db      37 dup (90h)
+		; push	(80 shl 16) or 292
+		; push	(V_WHITE or FX_WEIGHT_BOLD)
+		; mov	bx, [bp+var_4]
+		; shl	bx, 2
+		; pushd	CHAR_TITLE[bx]
+		; call	@graph_putsa_fx$qiiinxuc
+		; push	(128 shl 16) or 308
+		; push	(V_WHITE or FX_WEIGHT_BOLD)
+		; mov	bx, [bp+var_4]
+		; shl	bx, 2
+		; pushd	CHAR_NAME[bx]
+		; call	@graph_putsa_fx$qiiinxuc
+
 		les	bx, _resident
 		mov	al, es:[bx+resident_t.RESIDENT_playchar_paletted][1]
 		mov	ah, 0
@@ -489,18 +495,24 @@ loc_9A8E:
 		sar	ax, 1
 		add	ax, ax
 		mov	[bp+var_4], ax
-		push	(336 shl 16) or 292
-		push	(V_WHITE or FX_WEIGHT_BOLD)
-		mov	bx, [bp+var_4]
-		shl	bx, 2
-		pushd	CHAR_TITLE[bx]
-		call	@graph_putsa_fx$qiiinxuc
-		push	(384 shl 16) or 308
-		push	(V_WHITE or FX_WEIGHT_BOLD)
-		mov	bx, [bp+var_4]
-		shl	bx, 2
-		pushd	CHAR_NAME[bx]
-		call	@graph_putsa_fx$qiiinxuc
+
+                push    1
+                call    print_title_and_name
+                add     sp, 2
+                db      37 dup (90h)
+		; push	(336 shl 16) or 292
+		; push	(V_WHITE or FX_WEIGHT_BOLD)
+		; mov	bx, [bp+var_4]
+		; shl	bx, 2
+		; pushd	CHAR_TITLE[bx]
+		; call	@graph_putsa_fx$qiiinxuc
+		; push	(384 shl 16) or 308
+		; push	(V_WHITE or FX_WEIGHT_BOLD)
+		; mov	bx, [bp+var_4]
+		; shl	bx, 2
+		; pushd	CHAR_NAME[bx]
+		; call	@graph_putsa_fx$qiiinxuc
+
 		push	1
 		call	palette_black_in
 		mov	vsync_Count1, 0
@@ -2446,7 +2458,7 @@ _WIN_MESSAGE_FN label word
 
 off_E4B6	dd a@00dm0_txt
 					; "@00DM0.TXT"
-CHAR_TITLE		dd TITLE_REIMU		; "   夢と伝統を保守する巫女   "
+CHAR_TITLE		dd TITLE_REIMU		; "   夢と伝統を保守する巫女   " 1B9F:03CA
 CHAR_NAME		dd NAME_REIMU		; "   博麗　靈夢"
 		dd TITLE_MIMA		; " 久遠の夢に運命を任せる精神 "
 		dd NAME_MIMA		; "	魅 魔"
@@ -3141,6 +3153,54 @@ _right_guillemets_glyph label byte
         db 01001000b
         db 00000000b
         db 00000000b
+
+CHAR_TITLE_LINE1         dd TITLE_REIMU_LINE1		; "   夢と伝統を保守する巫女   " 1B9F:03CA
+CHAR_TITLE_LINE2         dd TITLE_REIMU_LINE2		; "   夢と伝統を保守する巫女   " 1B9F:03CA
+CHAR_NAME_PATCHED        dd NAME_REIMU_PATCHED		; "   博麗　靈夢"
+        dd TITLE_MIMA		; " 久遠の夢に運命を任せる精神 "
+        dd TITLE_MIMA		; " 久遠の夢に運命を任せる精神 "
+        dd NAME_MIMA		; "	魅 魔"
+        dd TITLE_MARISA	; "   魔法と紅夢からなる存在   "
+        dd TITLE_MARISA	; "   魔法と紅夢からなる存在   "
+        dd NAME_MARISA		; "  霧雨　魔理沙 "
+        dd TITLE_ELLEN		; "はたらきもので恋を夢見る魔女"
+        dd TITLE_ELLEN		; "はたらきもので恋を夢見る魔女"
+        dd NAME_ELLEN		; "　　エレン"
+        dd TITLE_KOTOHIME		; "	弾幕に美を夢みる姫     "
+        dd TITLE_KOTOHIME		; "	弾幕に美を夢みる姫     "
+        dd NAME_KOTOHIME		; "    小兎姫"
+        dd TITLE_KANA			; "	夢を失った少女騒霊     "
+        dd TITLE_KANA			; "	夢を失った少女騒霊     "
+        dd NAME_KANA	; "カナ・アナベラル"
+        dd TITLE_RIKAKO		; "  　　　夢を探す科学	       "
+        dd TITLE_RIKAKO		; "  　　　夢を探す科学	       "
+        dd NAME_RIKAKO	; "　朝倉　理香子"
+        dd TITLE_CHIYURI		; "　  時をかける夢幻の住人    "
+        dd TITLE_CHIYURI		; "　  時をかける夢幻の住人    "
+        dd NAME_CHIYURI	; " 北白河　ちゆり"
+        dd TITLE_YUMEMI	; "　  　　　夢幻伝説　　　    "
+        dd TITLE_YUMEMI	; "　  　　　夢幻伝説　　　    "
+        dd NAME_YUMEMI		; " 　岡崎　夢美"
+
+TITLE_REIMU_LINE1       db 'La Miko defensora de los',0
+TITLE_REIMU_LINE2       db 'Sueﾁos y Las Tradiciones',0
+NAME_REIMU_PATCHED      db '   ― Reimu Hakurei ―  ',0
+TITLE_MIMA_PATCHED      db ' 久遠の夢に運命を任せる精神 ',0
+NAME_MIMA_PATCHED       db '     魅 魔',0
+TITLE_MARISA_PATCHED    db '   魔法と紅夢からなる存在   ',0
+NAME_MARISA_PATCHED     db '  霧雨　魔理沙 ',0
+TITLE_ELLEN_PATCHED     db 'はたらきもので恋を夢見る魔女',0
+NAME_ELLEN_PATCHED      db '　　エレン',0
+TITLE_KOTOHIME_PATCHED  db '     弾幕に美を夢みる姫     ',0
+NAME_KOTOHIME_PATCHED   db '    小兎姫',0
+TITLE_KANA_PATCHED      db '     夢を失った少女騒霊     ',0
+NAME_KANA_PATCHED       db 'カナ・アナベラル',0
+TITLE_RIKAKO_PATCHED    db '  　　　夢を探す科学        ',0
+NAME_RIKAKO_PATCHED     db '　朝倉　理香子',0
+TITLE_CHIYURI_PATCHED   db '　  時をかける夢幻の住人    ',0
+NAME_CHIYURI_PATCHED    db ' 北白河　ちゆり',0
+TITLE_YUMEMI_PATCHED    db '　  　　　夢幻伝説　　　    ',0
+NAME_YUMEMI_PATCHED     db ' 　岡崎　夢美',0
         
 
 FONT_READ_PATCHED proc far
@@ -3192,6 +3252,64 @@ FONT_READ_PATCHED proc far
         pop     bp
         retf    06h
 FONT_READ_PATCHED endp 
+
+print_title_and_name proc far
+arg     @@is_2p:word
+local   @@temp_ax:word
+        push    bp
+        mov     bp, sp
+        push    dx
+        mov     [@@temp_ax], ax
+        
+        mov     ax, 336
+        cmp     [word ptr @@is_2p], 1
+        je      @@L1
+        mov     ax, 80
+@@L1:
+        push    ax
+        push    292
+        push    (V_WHITE or FX_WEIGHT_BOLD)
+        mov     ax, [@@temp_ax]
+        mov     bx, 6
+        mul     bx
+        mov     bx, ax
+        pushd   CHAR_TITLE_LINE1[bx]
+        call    @graph_putsa_fx$qiiinxuc
+
+        mov     ax, 336
+        cmp     [word ptr @@is_2p], 1
+        je      @@L2
+        mov     ax, 80
+@@L2:
+        push    ax
+        push    308
+        push    (V_WHITE or FX_WEIGHT_BOLD)
+        mov     ax, [@@temp_ax]
+        mov     bx, 6
+        mul     bx
+        mov     bx, ax
+        pushd   CHAR_TITLE_LINE2[bx]
+        call    @graph_putsa_fx$qiiinxuc
+
+        mov     ax, 336
+        cmp     [word ptr @@is_2p], 1
+        je      @@L3
+        mov     ax, 80
+@@L3:
+        push    ax
+        push    324
+        push    (V_WHITE or FX_WEIGHT_BOLD)
+        mov     ax, [@@temp_ax]
+        mov     bx, 6
+        mul     bx
+        mov     bx, ax
+        pushd   CHAR_NAME_PATCHED[bx]
+        call    @graph_putsa_fx$qiiinxuc
+
+        pop     dx
+        pop     bp
+        ret
+print_title_and_name endp
 
 SPANISH_TRANSLATION_TEXT	ends
 		end
