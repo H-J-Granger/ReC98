@@ -469,10 +469,10 @@ loc_9A8E:
 		add	ax, ax
 		mov	[bp+var_4], ax
 
-                push    0
-                call    print_title_and_name
-                add     sp, 2
-                db      37 dup (90h)
+        push    0                       ; 6A 00
+        call    print_title_and_name    ; 9A [off] [seg]
+        add     sp, 2                   ; 83 C4 02
+        db      38 dup (90h)            
 		; push	(80 shl 16) or 292
 		; push	(V_WHITE or FX_WEIGHT_BOLD)
 		; mov	bx, [bp+var_4]
@@ -496,10 +496,10 @@ loc_9A8E:
 		add	ax, ax
 		mov	[bp+var_4], ax
 
-                push    1
-                call    print_title_and_name
-                add     sp, 2
-                db      37 dup (90h)
+        push    1                       ; 6A 01
+        call    print_title_and_name    ; 9A [off] [seg]
+        add     sp, 2                   ; 83 C4 02
+        db      38 dup (90h)           
 		; push	(336 shl 16) or 292
 		; push	(V_WHITE or FX_WEIGHT_BOLD)
 		; mov	bx, [bp+var_4]
@@ -2761,7 +2761,7 @@ playchar_10BD7	db ?
 _skill	db ?
 		db    ?	;
 
-SPANISH_TRANSLATION_TEXT	segment byte public 'BSS' use16
+SPANISH_TRANSLATION_TEXT	segment byte public 'DATA' use16
 	assume cs:SPANISH_TRANSLATION_TEXT
 
 public FONT_READ_PATCHED
@@ -3153,55 +3153,64 @@ _right_guillemets_glyph label byte
         db 01001000b
         db 00000000b
         db 00000000b
-
+        
 CHAR_TITLE_LINE1         dd TITLE_REIMU_LINE1		; "   夢と伝統を保守する巫女   " 1B9F:03CA
 CHAR_TITLE_LINE2         dd TITLE_REIMU_LINE2		; "   夢と伝統を保守する巫女   " 1B9F:03CA
 CHAR_NAME_PATCHED        dd NAME_REIMU_PATCHED		; "   博麗　靈夢"
-        dd TITLE_MIMA		; " 久遠の夢に運命を任せる精神 "
-        dd TITLE_MIMA		; " 久遠の夢に運命を任せる精神 "
-        dd NAME_MIMA		; "	魅 魔"
-        dd TITLE_MARISA	; "   魔法と紅夢からなる存在   "
-        dd TITLE_MARISA	; "   魔法と紅夢からなる存在   "
-        dd NAME_MARISA		; "  霧雨　魔理沙 "
-        dd TITLE_ELLEN		; "はたらきもので恋を夢見る魔女"
-        dd TITLE_ELLEN		; "はたらきもので恋を夢見る魔女"
-        dd NAME_ELLEN		; "　　エレン"
-        dd TITLE_KOTOHIME		; "	弾幕に美を夢みる姫     "
-        dd TITLE_KOTOHIME		; "	弾幕に美を夢みる姫     "
-        dd NAME_KOTOHIME		; "    小兎姫"
-        dd TITLE_KANA			; "	夢を失った少女騒霊     "
-        dd TITLE_KANA			; "	夢を失った少女騒霊     "
-        dd NAME_KANA	; "カナ・アナベラル"
-        dd TITLE_RIKAKO		; "  　　　夢を探す科学	       "
-        dd TITLE_RIKAKO		; "  　　　夢を探す科学	       "
-        dd NAME_RIKAKO	; "　朝倉　理香子"
-        dd TITLE_CHIYURI		; "　  時をかける夢幻の住人    "
-        dd TITLE_CHIYURI		; "　  時をかける夢幻の住人    "
-        dd NAME_CHIYURI	; " 北白河　ちゆり"
-        dd TITLE_YUMEMI	; "　  　　　夢幻伝説　　　    "
-        dd TITLE_YUMEMI	; "　  　　　夢幻伝説　　　    "
-        dd NAME_YUMEMI		; " 　岡崎　夢美"
+        dd TITLE_MIMA_LINE1		; " 久遠の夢に運命を任せる精神 "
+        dd TITLE_MIMA_LINE2		; " 久遠の夢に運命を任せる精神 "
+        dd NAME_MIMA_PATCHED		; "	魅 魔"
+        dd TITLE_MARISA_LINE1	; "   魔法と紅夢からなる存在   "
+        dd TITLE_MARISA_LINE2	; "   魔法と紅夢からなる存在   "
+        dd NAME_MARISA_PATCHED		; "  霧雨　魔理沙 "
+        dd TITLE_ELLEN_LINE1		; "はたらきもので恋を夢見る魔女"
+        dd TITLE_ELLEN_LINE2		; "はたらきもので恋を夢見る魔女"
+        dd NAME_ELLEN_PATCHED		; "　　エレン"
+        dd TITLE_KOTOHIME_LINE1		; "	弾幕に美を夢みる姫     "
+        dd TITLE_KOTOHIME_LINE2		; "	弾幕に美を夢みる姫     "
+        dd NAME_KOTOHIME_PATCHED		; "    小兎姫"
+        dd TITLE_KANA_LINE1			; "	夢を失った少女騒霊     "
+        dd TITLE_KANA_LINE2			; "	夢を失った少女騒霊     "
+        dd NAME_KANA_PATCHED	; "カナ・アナベラル"
+        dd TITLE_RIKAKO_LINE1		; "  　　　夢を探す科学	       "
+        dd TITLE_RIKAKO_LINE2		; "  　　　夢を探す科学	       "
+        dd NAME_RIKAKO_PATCHED	; "　朝倉　理香子"
+        dd TITLE_CHIYURI_LINE1		; "　  時をかける夢幻の住人    "
+        dd TITLE_CHIYURI_LINE2		; "　  時をかける夢幻の住人    "
+        dd NAME_CHIYURI_PATCHED	; " 北白河　ちゆり"
+        dd TITLE_YUMEMI_LINE1	; "　  　　　夢幻伝説　　　    "
+        dd TITLE_YUMEMI_LINE2	; "　  　　　夢幻伝説　　　    "
+        dd NAME_YUMEMI_PATCHED		; " 　岡崎　夢美"
 
-TITLE_REIMU_LINE1       db 'La Miko defensora de los',0
-TITLE_REIMU_LINE2       db 'Sueﾁos y Las Tradiciones',0
-NAME_REIMU_PATCHED      db '   ― Reimu Hakurei ―  ',0
-TITLE_MIMA_PATCHED      db ' 久遠の夢に運命を任せる精神 ',0
-NAME_MIMA_PATCHED       db '     魅 魔',0
-TITLE_MARISA_PATCHED    db '   魔法と紅夢からなる存在   ',0
-NAME_MARISA_PATCHED     db '  霧雨　魔理沙 ',0
-TITLE_ELLEN_PATCHED     db 'はたらきもので恋を夢見る魔女',0
-NAME_ELLEN_PATCHED      db '　　エレン',0
-TITLE_KOTOHIME_PATCHED  db '     弾幕に美を夢みる姫     ',0
-NAME_KOTOHIME_PATCHED   db '    小兎姫',0
-TITLE_KANA_PATCHED      db '     夢を失った少女騒霊     ',0
-NAME_KANA_PATCHED       db 'カナ・アナベラル',0
-TITLE_RIKAKO_PATCHED    db '  　　　夢を探す科学        ',0
-NAME_RIKAKO_PATCHED     db '　朝倉　理香子',0
-TITLE_CHIYURI_PATCHED   db '　  時をかける夢幻の住人    ',0
-NAME_CHIYURI_PATCHED    db ' 北白河　ちゆり',0
-TITLE_YUMEMI_PATCHED    db '　  　　　夢幻伝説　　　    ',0
-NAME_YUMEMI_PATCHED     db ' 　岡崎　夢美',0
-        
+; The trailing spaces here can be used to reduce the memory usage, but I'll 
+; leave them here to help aligning. After all, it's only ~120 Bytes...
+TITLE_REIMU_LINE1       db '  La Miko defensora de los  ',0
+TITLE_REIMU_LINE2       db '  Sueﾁos y Las Tradiciones  ',0
+NAME_REIMU_PATCHED      db '     ― Reimu Hakurei ―    ',0
+TITLE_MIMA_LINE1        db 'Espﾇritu que deja el Destino',0
+TITLE_MIMA_LINE2        db '  al Sueﾁo de la eternidad  ',0
+NAME_MIMA_PATCHED       db '         ― Mima ―         ',0
+TITLE_MARISA_LINE1      db 'La entidad proveniente de la',0
+TITLE_MARISA_LINE2      db ' Magia y de los Sueﾁos Rojos',0
+NAME_MARISA_PATCHED     db '    ― Marisa Kirisame ―   ',0
+TITLE_ELLEN_LINE1       db '   Una Brujita trabajadora  ',0
+TITLE_ELLEN_LINE2       db '    que Sueﾁa con el Amor   ',0
+NAME_ELLEN_PATCHED      db '         ― Ellen ―        ',0
+TITLE_KOTOHIME_LINE1    db '   Una princesa que sueﾁa   ',0
+TITLE_KOTOHIME_LINE2    db ' con la Hermosura en Danmaku',0
+NAME_KOTOHIME_PATCHED   db '       ― Kotohime ―       ',0
+TITLE_KANA_LINE1        db '    Sirvienta poltergeist   ',0
+TITLE_KANA_LINE2        db '  que ha perdido sus Sueﾁos ',0
+NAME_KANA_PATCHED       db '     ― Kana Anaberal ―    ',0
+TITLE_RIKAKO_LINE1      db ' Cientifica que busca Sueﾁos',0
+TITLE_RIKAKO_LINE2      db '                            ',0
+NAME_RIKAKO_PATCHED     db '    ― Rikako Azakura ―    ',0
+TITLE_CHIYURI_LINE1     db 'Residente de la Fantasia que',0
+TITLE_CHIYURI_LINE2     db ' corre a travﾅs del Tiempo  ',0
+NAME_CHIYURI_PATCHED    db ' ― Chiyuri Kitashirakawa ―',0
+TITLE_YUMEMI_LINE1      db '     Leyenda Fantﾃstica     ',0
+TITLE_YUMEMI_LINE2      db '                            ',0
+NAME_YUMEMI_PATCHED     db '    ― Yumemi Okazaki ―    ',0
 
 FONT_READ_PATCHED proc far
         push    bp
@@ -3273,7 +3282,9 @@ local   @@temp_ax:word
         mov     bx, 6
         mul     bx
         mov     bx, ax
-        pushd   CHAR_TITLE_LINE1[bx]
+        ; pushd   CHAR_TITLE_LINE1[bx]
+        push    word ptr cs:[CHAR_TITLE_LINE1 + bx + 2]
+        push    word ptr cs:[CHAR_TITLE_LINE1 + bx]
         call    @graph_putsa_fx$qiiinxuc
 
         mov     ax, 336
@@ -3288,7 +3299,9 @@ local   @@temp_ax:word
         mov     bx, 6
         mul     bx
         mov     bx, ax
-        pushd   CHAR_TITLE_LINE2[bx]
+        ; pushd   CHAR_TITLE_LINE2[bx]
+        push    word ptr cs:[CHAR_TITLE_LINE2 + bx + 2]
+        push    word ptr cs:[CHAR_TITLE_LINE2 + bx]
         call    @graph_putsa_fx$qiiinxuc
 
         mov     ax, 336
@@ -3303,13 +3316,17 @@ local   @@temp_ax:word
         mov     bx, 6
         mul     bx
         mov     bx, ax
-        pushd   CHAR_NAME_PATCHED[bx]
+        ; pushd   CHAR_NAME_PATCHED[bx]
+        push    word ptr cs:[CHAR_NAME_PATCHED + bx + 2]
+        push    word ptr cs:[CHAR_NAME_PATCHED + bx]
         call    @graph_putsa_fx$qiiinxuc
 
+        ; db 5Ah, 1Fh, 5Dh, 0CBh
         pop     dx
         pop     bp
         ret
 print_title_and_name endp
 
 SPANISH_TRANSLATION_TEXT	ends
-		end
+
+        end
