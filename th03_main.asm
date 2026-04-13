@@ -4653,43 +4653,49 @@ arg_2		= byte ptr  6
 		add	si, 28h	; '('
 
 loc_CADF:
-		call	gaiji_putsa pascal, si, 11, ds, offset gbWARNING_1, di
-		call	gaiji_putsa pascal, si, 12, ds, offset gbWARNING_2, di
-		call	gaiji_putsa pascal, si, 13, ds, offset gbWARNING_3, di
-		add	si, 4
-		call	gaiji_putsa pascal, si, 14, ds, offset gpYOU_ARE_FORCED_TO_EVADE_FROM, di
-		mov	al, [bp+arg_2]
-		mov	ah, 0
-		mov	bx, ax
-		cmp	_gba_flag_next[bx], GBAF_BOSS
-		jz	short loc_CB47
-		lea	ax, [si+2]
-		call	gaiji_putsa pascal, ax, 15, ds, offset gpGAUGE_ATTACK_LEVEL, di
-		lea	ax, [si+13h]
-		push	ax
-		push	0Fh
-		mov	al, [bp+arg_2]
-		mov	ah, 0
-		mov	bx, ax
-		mov	al, _gba_gauge_level[bx]
-		jmp	short loc_CB60
-; ---------------------------------------------------------------------------
+                push    cx                      ; 1 byte
+                mov     cl, [bp + arg_2]        ; 4 bytes
+                call    print_warning_message   ; 5 bytes
+                pop     cx                      ; 1 byte
+                db      145 dup (90h)
+; 		call	gaiji_putsa pascal, si, 11, ds, offset gbWARNING_1, di
+; 		call	gaiji_putsa pascal, si, 12, ds, offset gbWARNING_2, di
+; 		call	gaiji_putsa pascal, si, 13, ds, offset gbWARNING_3, di
+; 		add	si, 4
+; 		call	gaiji_putsa pascal, si, 14, ds, offset gpYOU_ARE_FORCED_TO_EVADE_FROM, di
+; 		mov	al, [bp+arg_2]
+; 		mov	ah, 0
+; 		mov	bx, ax
+; 		cmp	_gba_flag_next[bx], GBAF_BOSS
+; 		jz	short loc_CB47
+; 		lea	ax, [si+2]
+; 		call	gaiji_putsa pascal, ax, 15, ds, offset gpGAUGE_ATTACK_LEVEL, di
+; 		lea	ax, [si+13h]
+; 		push	ax
+; 		push	0Fh
+; 		mov	al, [bp+arg_2]
+; 		mov	ah, 0
+; 		mov	bx, ax
+; 		mov	al, _gba_gauge_level[bx]
+; 		jmp	short loc_CB60
+; ; ---------------------------------------------------------------------------
 
-loc_CB47:
-		lea	ax, [si+2]
-		call	gaiji_putsa pascal, ax, 15, ds, offset gpBOSS_ATTACK_LEVEL, di
-		lea	ax, [si+13h]
-		push	ax
-		push	0Fh
-		mov	al, _gba_boss_level
+; loc_CB47:
+; 		lea	ax, [si+2]
+; 		call	gaiji_putsa pascal, ax, 15, ds, offset gpBOSS_ATTACK_LEVEL, di
+; 		lea	ax, [si+13h]
+; 		push	ax
+; 		push	0Fh
+; 		mov	al, _gba_boss_level
 
-loc_CB60:
-		mov	ah, 0
-		add	ax, 1Fh
-		push	ax
-		push	TX_WHITE
-		call	gaiji_putca
-		call	gaiji_putsa pascal, si, 16, ds, offset gpYOUR_LIFE_IS_IN_PERIL_BE_CAREFUL, di
+; loc_CB60:
+; 		mov	ah, 0
+; 		add	ax, 1Fh
+; 		push	ax
+; 		push	TX_WHITE
+; 		call	gaiji_putca
+; 		call	gaiji_putsa pascal, si, 16, ds, offset gpYOUR_LIFE_IS_IN_PERIL_BE_CAREFUL, di
+
 		pop	di
 		pop	si
 		pop	bp
@@ -30133,6 +30139,23 @@ bullet_template_t ends
 SPANISH_TRANSLATION_MAIN_TEXT	segment word public 'BSS' use16
 	assume cs:SPANISH_TRANSLATION_MAIN_TEXT
         
+WARNING_LINE_1	db 50h,	51h, 52h, 53h, 54h, 55h, 56h, 57h, 58h, 59h, 5Ah
+		db 5Bh,	5Ch, 5Dh, 5Eh, 5Fh, 0
+WARNING_LINE_2	db 60h,	61h, 62h, 63h, 64h, 65h, 66h, 67h, 68h, 69h, 6Ah
+		db 6Bh,	6Ch, 6Dh, 6Eh, 6Fh, 0
+WARNING_LINE_3	db 70h,	71h, 72h, 73h, 74h, 75h, 76h, 77h, 78h, 79h, 7Ah
+		db 7Bh,	7Ch, 7Dh, 7Eh, 7Fh, 0
+YOU_ARE_FORCED_TO_EVADE_FROM_TEXT       db 82h, 83h, 84h, 85h, 86h, 87h, 88h
+		                        db 89h, 8Ah, 8Bh, 8Ch, 0
+GAUGE_ATTACK_LEVEL_TEXT                 db 0C7h, 0C8h, 0C9h, 0CAh, 0D0h, 0D1h
+                                        db 0D2h, 0CEh, 0F0h, 0F1h, 0
+BOSS_ATTACK_LEVEL_TEXT                  db 0C7h, 0C8h, 0C9h, 0CAh, 0CBh, 0CCh
+                                        db 0CDh, 0CEh, 0F0h, 0F1h, 0
+YOUR_LIFE_IS_IN_PERIL_BE_CAREFUL_TEXT   db 8Dh, 8Eh, 8Fh, 92h, 93h, 94h, 95h
+		                        db 96h, 97h, 98h, 99h, 9Ah, 9Bh, 9Ch, 0
+
+print_warning_message_arg_2       db ?
+
 include libs/master.lib/text_putca.asm
 
 ; my_text_putca proc near
@@ -30287,6 +30310,57 @@ local @@printing_kanji:word
         pop     es
         ret
 text_putsa_patched endp
+
+print_warning_message proc far
+	mov	[cs:print_warning_message_arg_2], cl
+	call	gaiji_putsa pascal, si, 11, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT:WARNING_LINE_1, di
+	call	gaiji_putsa pascal, si, 12, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT:WARNING_LINE_2, di
+	call	gaiji_putsa pascal, si, 13, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT:WARNING_LINE_3, di
+	add	si, 4
+	call	gaiji_putsa pascal, si, 14, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT: \
+                YOU_ARE_FORCED_TO_EVADE_FROM_TEXT, di
+	mov	al, [cs:print_warning_message_arg_2]
+	mov	ah, 0
+	mov	bx, ax
+	cmp	_gba_flag_next[bx], GBAF_BOSS
+	jz	short @@L2
+        lea     ax, [si+1]
+	call	gaiji_putsa pascal, ax, 15, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT:GAUGE_ATTACK_LEVEL_TEXT, \
+                di
+	lea	ax, [si+15h]
+	push	ax
+	push	0Fh
+	mov	al, [cs:print_warning_message_arg_2]
+	mov	ah, 0
+	mov	bx, ax
+	mov	al, _gba_gauge_level[bx]
+	jmp	short @@L1
+
+@@L2:
+        lea     ax, [si+1]
+	call	gaiji_putsa pascal, ax, 15, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT:BOSS_ATTACK_LEVEL_TEXT, di
+	lea	ax, [si+15h]
+	push	ax
+	push	0Fh
+	mov	al, _gba_boss_level
+
+@@L1:
+	mov	ah, 0
+	add	ax, 1Fh
+	push	ax
+	push	TX_WHITE
+	call	gaiji_putca
+	call	gaiji_putsa pascal, si, 16, cs, \
+                offset SPANISH_TRANSLATION_MAIN_TEXT: \
+                YOUR_LIFE_IS_IN_PERIL_BE_CAREFUL_TEXT, di
+        ret
+print_warning_message endp
 
 SPANISH_TRANSLATION_MAIN_TEXT ends
 		end
