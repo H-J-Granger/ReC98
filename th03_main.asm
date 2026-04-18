@@ -29642,14 +29642,14 @@ include th03/main/5_powers_of_10[data].asm
 ; aALL_CLEAR	db 'Å@Å@Å@Ç`ÇkÇkÅ@ÇbÇkÇdÇ`ÇqÅIÅIÅ@Å@',0
 ; aPLAYER_REM	db 'écÇËêlêîÅ@Å@Å@Å@Å@Å@Å@Å@Å~',0
 aMAX_COMBO              db 'Combo m√ximo            Å~',0
-aGAUGE_ATTACK_TIMES     db 'Ataques de carga        Å~',0
-aBOSS_ATTACK_TIMES      db 'Ataques de jefe         Å~',0
-aBOSS_REVERSAL_TIMES    db 'Giro de Jefe            Å~',0
+aGAUGE_ATTACK_TIMES     db 'Ataque de carga         Å~',0
+aBOSS_ATTACK_TIMES      db 'Ataque de jefe          Å~',0
+aBOSS_REVERSAL_TIMES    db 'Rev≈s de Jefe           Å~',0
 aBOSS_PANIC_TIMES       db 'Jefe de p√nico          Å~',0
 aTOTAL                  db 'Total                     ',0
-aWINNER_BONUS           db '       Bonus de Victoria        ',0
-aALL_CLEAR              db '     ÇbÇnÇlÇoÇkÇdÇsÇ`ÇcÇnÅIÅI   ',0
-aPLAYER_REM             db 'Vidas restantes         Å~',0
+aWINNER_BONUS           db '         Bono de ganador        ',0
+aALL_CLEAR              db '         ––COMPLETADO!!         ',0
+aPLAYER_REM             db 'Jugadores restantes     Å~',0
 	evendata
 include th03/sprites/pellet.asp
 		db    1

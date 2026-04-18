@@ -3184,31 +3184,31 @@ CHAR_NAME_PATCHED        dd NAME_REIMU_PATCHED		; "   博麗　靈夢"
 
 ; The trailing spaces here can be used to reduce the memory usage, but I'll 
 ; leave them here to help aligning. After all, it's only ~120 Bytes...
-TITLE_REIMU_LINE1       db '  La Miko defensora de los  ',0
-TITLE_REIMU_LINE2       db '  Sueﾁos y Las Tradiciones  ',0
+TITLE_REIMU_LINE1       db '   La miko conservadora de  ',0
+TITLE_REIMU_LINE2       db '    sueﾁos y traduciones    ',0
 NAME_REIMU_PATCHED      db '     ― Reimu Hakurei ―    ',0
-TITLE_MIMA_LINE1        db 'Espﾇritu que deja el Destino',0
-TITLE_MIMA_LINE2        db '  al Sueﾁo de la eternidad  ',0
+TITLE_MIMA_LINE1        db '   El espﾇritu que deja su  ',0
+TITLE_MIMA_LINE2        db 'destino a los sueﾁos eternos',0
 NAME_MIMA_PATCHED       db '         ― Mima ―         ',0
-TITLE_MARISA_LINE1      db 'La entidad proveniente de la',0
-TITLE_MARISA_LINE2      db ' Magia y de los Sueﾁos Rojos',0
+TITLE_MARISA_LINE1      db '      El ser de magia y     ',0
+TITLE_MARISA_LINE2      db '      sueﾁos escarlatas     ',0
 NAME_MARISA_PATCHED     db '    ― Marisa Kirisame ―   ',0
-TITLE_ELLEN_LINE1       db '   Una Brujita trabajadora  ',0
-TITLE_ELLEN_LINE2       db '    que Sueﾁa con el Amor   ',0
+TITLE_ELLEN_LINE1       db '     La bruja trabajadora   ',0
+TITLE_ELLEN_LINE2       db '    que sueﾁa con el amor   ',0
 NAME_ELLEN_PATCHED      db '         ― Ellen ―        ',0
-TITLE_KOTOHIME_LINE1    db '   Una princesa que sueﾁa   ',0
-TITLE_KOTOHIME_LINE2    db ' con la Hermosura en Danmaku',0
+TITLE_KOTOHIME_LINE1    db '  La princesa que sueﾁa con ',0
+TITLE_KOTOHIME_LINE2    db '   la belleza en danmakus   ',0
 NAME_KOTOHIME_PATCHED   db '       ― Kotohime ―       ',0
-TITLE_KANA_LINE1        db '    Sirvienta poltergeist   ',0
-TITLE_KANA_LINE2        db '  que ha perdido sus Sueﾁos ',0
+TITLE_KANA_LINE1        db '     La poltergeist que     ',0
+TITLE_KANA_LINE2        db '       perdiﾉ su sueﾁo      ',0
 NAME_KANA_PATCHED       db '     ― Kana Anaberal ―    ',0
-TITLE_RIKAKO_LINE1      db ' Cientifica que busca Sueﾁos',0
-TITLE_RIKAKO_LINE2      db '                            ',0
+TITLE_RIKAKO_LINE1      db '      La cientﾇfica que     ',0
+TITLE_RIKAKO_LINE2      db '       busca su sueﾁo       ',0
 NAME_RIKAKO_PATCHED     db '    ― Rikako Azakura ―    ',0
-TITLE_CHIYURI_LINE1     db 'Residente de la Fantasia que',0
-TITLE_CHIYURI_LINE2     db ' corre a travﾅs del Tiempo  ',0
+TITLE_CHIYURI_LINE1     db '    La habitante onﾇrica    ',0
+TITLE_CHIYURI_LINE2     db '     que cruza el tiempo    ',0
 NAME_CHIYURI_PATCHED    db ' ― Chiyuri Kitashirakawa ―',0
-TITLE_YUMEMI_LINE1      db '     Leyenda Fantﾃstica     ',0
+TITLE_YUMEMI_LINE1      db '     La leyenda onﾇrica     ',0
 TITLE_YUMEMI_LINE2      db '                            ',0
 NAME_YUMEMI_PATCHED     db '    ― Yumemi Okazaki ―    ',0
 
