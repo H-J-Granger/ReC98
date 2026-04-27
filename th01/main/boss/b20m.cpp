@@ -559,7 +559,7 @@ void pascal near birds_reset_fire_spawn_unput_update_render(
 		double velocity_y[BIRD_COUNT];
 		int8_t unknown[BIRD_COUNT];
 		char hatch_time[BIRD_COUNT];
-		char hatch_duration[BIRD_COUNT];
+		int8_t hatch_frames[BIRD_COUNT];
 
 		double pellet_left(int i) {
 			return (left[i] + ((BIRD_W / 2) - (PELLET_W / 2)));
@@ -638,7 +638,7 @@ void pascal near birds_reset_fire_spawn_unput_update_render(
 				birds.left[i] = func_or_left;
 				birds.top[i] = top;
 				birds.unknown[i] = unknown;
-				birds.hatch_duration[i] = birds.hatch_time[i];
+				birds.hatch_frames[i] = birds.hatch_time[i];
 				return;
 			}
 		}
@@ -650,8 +650,8 @@ void pascal near birds_reset_fire_spawn_unput_update_render(
 			}
 			if(birds.hatch_time[i] > 0) {
 				bird_put_8(birds.left[i], birds.top[i], ((
-					(birds.hatch_duration[i] - birds.hatch_time[i]) /
-					(birds.hatch_duration[i] / BIRD_HATCH_CELS)
+					(birds.hatch_frames[i] - birds.hatch_time[i]) /
+					(birds.hatch_frames[i] / BIRD_HATCH_CELS)
 				) + C_HATCH));
 				birds.hatch_time[i]--;
 			} else {
@@ -729,23 +729,23 @@ void near shield_render_both(void)
 // returns `true` once the animation completed.
 bool16 pascal near wand_render_raise_both(bool16 restart = false)
 {
-	static int frames = 0;
+	static int frame = 0;
 
 	if(restart == true) {
-		frames = 0;
-	} else if (frames == 0) {
-		frames = 1;
+		frame = 0;
+	} else if (frame == 0) {
+		frame = 1;
 	} else {
-		frames++;
-		if(frames == 2) {
+		frame++;
+		if(frame == 2) {
 			anm_wand.bos_image = 0;
 			graph_accesspage_func(1);	anm_wand.put_8();
 			graph_accesspage_func(0);	anm_wand.put_8();
-		} else if(frames == 16) {
+		} else if(frame == 16) {
 			anm_wand.bos_image = 1;
 			graph_accesspage_func(1);	anm_wand.put_8();
 			graph_accesspage_func(0);	anm_wand.put_8();
-			frames = 0;
+			frame = 0;
 			return true;
 		}
 	}
@@ -1499,8 +1499,8 @@ void near pattern_detonating_snowflake(void)
 		player_is_hit = true;
 	}
 
-	#undef ellipse_put
 	#undef ellipse_sloppy_unput
+	#undef ellipse_put
 }
 
 void near pattern_2_rings_from_a2_orbs(void)
@@ -1631,9 +1631,11 @@ void near particles2x2_wavy_unput_update_render()
 
 void near pattern_four_aimed_lasers(void)
 {
-	#define ORIGIN_DISTANCE_X_1 (SEAL_CENTER_X - SEAL_RADIUS)
-	#define ORIGIN_Y_1 FACE_CENTER_Y
-	#define ORIGIN_Y_2 SHIELD_CENTER_Y
+	enum {
+		ORIGIN_DISTANCE_X_1 = (SEAL_CENTER_X - SEAL_RADIUS),
+		ORIGIN_Y_1 = FACE_CENTER_Y,
+		ORIGIN_Y_2 = SHIELD_CENTER_Y,
+	};
 
 	static screen_x_t origin_x;
 	static screen_y_t origin_y;
@@ -1727,10 +1729,6 @@ void near pattern_four_aimed_lasers(void)
 
 	#undef fire
 	#undef spawnray_init
-
-	#undef ORIGIN_Y_2
-	#undef ORIGIN_Y_1
-	#undef ORIGIN_DISTANCE_X_1
 }
 
 void near shake_for_50_frames(void)
@@ -2045,7 +2043,7 @@ void near pascal dottedcircle_unput_update_render(
 	pixel_t radius_step,
 	vc2 col,
 	pixel_t radius_initial,
-	int duration
+	int frames
 )
 {
 	static pixel_t radius_prev;
@@ -2062,7 +2060,7 @@ void near pascal dottedcircle_unput_update_render(
 			return;
 		}
 		shape_circle_sloppy_unput(center_x, center_y, radius_prev, 0x01);
-		if(frame_1based >= duration) {
+		if(frame_1based >= frames) {
 			active = false;
 			return;
 		}
@@ -2200,7 +2198,7 @@ void pascal near pattern_curved_spray_leftright_once(int &frame)
 	// The duration can be calculated as:
 	//
 	//	target_radius = √((RES_X - SEAL_CENTER_X)² + (RES_Y - SEAL_CENTER_Y)²)
-	//	duration = (((target_radius - radius_initial) / radius_step) * interval)
+	//	frames = (((target_radius - radius_initial) / radius_step) * interval)
 	//
 	// Good luck doing that at compile time, but given the variables defined
 	// here, the result does come out as 88.38. So, close enough.
@@ -2226,8 +2224,6 @@ void pascal near pattern_curved_spray_leftright_once(int &frame)
 			frame = 0;
 		}
 	}
-
-	#undef spray
 }
 
 void pascal near pattern_rain_from_seal_center(int &frame)
