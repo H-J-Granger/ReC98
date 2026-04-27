@@ -109,7 +109,9 @@ void timer_put(void)
 void timer_tick_and_put(void)
 {
 	if(stage_timer > 0) {
+		#ifndef MIRAI_TH01_F4
 		stage_timer -= TIMER_TICK;
+		#endif 
 		timer_put();
 		if(stage_timer == 0) {
 			pellet_speed_raise(0.05f);
