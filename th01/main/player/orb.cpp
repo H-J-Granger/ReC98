@@ -103,7 +103,9 @@ void pascal orb_and_pellets_and_stage_unput_update_render__vsync_wait(
 		if(orb_cur_top > ORB_TOP_MAX) {
 			orb_force_new(COEFFICIENT_OF_RESTITUTION, OF_BOUNCE_FROM_SURFACE);
 			orb_cur_top = ORB_TOP_MAX;
+			#ifndef MIRAI_TH01_F5
 			cardcombo_cur = 0;
+			#endif
 		}
 		if(orb_cur_top < ORB_TOP_MIN) {
 			orb_force_new(0, OF_BOUNCE_FROM_TOP);

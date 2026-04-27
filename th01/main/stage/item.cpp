@@ -364,7 +364,9 @@ void items_point_reset(void)
 
 void point_drop(void)
 {
+	#ifndef MIRAI_TH01_F6
 	resident->point_value = 0;
+	#endif
 }
 
 void point_collect_update_and_render(int slot)
