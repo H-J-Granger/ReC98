@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "th01/rank.h"
 #include "th01/resident.hpp"
 #include "th01/v_colors.hpp"
@@ -80,7 +82,7 @@ add_point_item:
 
 #include "th01/math/str_val.cpp"
 
-static const unsigned int CARD_SCORE_CAP_DIGITS = digit_count(CARD_SCORE_CAP);
+static const unsigned int CARD_SCORE_CAP_DIGITS = 7;
 static const pixel_t CARD_SCORE_W = (CARD_SCORE_CAP_DIGITS * GLYPH_HALF_W);
 
 // The score animation lags behind the card-flipping animation by this amount
@@ -123,9 +125,13 @@ void cards_score_render(void)
 			// cards_hittest() ensures that 100 is the minimum value.
 			// ZUN bug: Should be >=. Can in fact be observed on stages 96-99
 			// on non-Lunatic, and stages 321-324 on Lunatic.
-			if(cards_score[i] > 10000) {
+			if(cards_score[i] >= 1000000) {
+				offset_left = -3 * GLYPH_HALF_W;
+			} else if(cards_score[i] >= 100000) {
+				offset_left = -2 * GLYPH_HALF_W;
+			} else if(cards_score[i] >= 10000) {
 				offset_left = -GLYPH_HALF_W;
-			} else if(cards_score[i] > 1000) {
+			} else if(cards_score[i] >= 1000) {
 				offset_left = 0;
 			} else {
 				if(cards_score[i] > 100) {
@@ -147,7 +153,7 @@ void cards_score_render(void)
 			if(cards.flip_frame[i] >= KEYFRAME_SCORE_DONE) {
 				cards_score[i] = 0;
 			} else {
-				str_from_positive_int16(str, cards_score[i]);
+				sprintf(str, "%ld", cards_score[i]);
 				graph_putsa_fx(
 					(cards.left[i] + offset_left),
 					(cards.top[i] + offset_top - popup_y),
