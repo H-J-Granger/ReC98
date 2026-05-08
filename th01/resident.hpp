@@ -67,7 +67,7 @@ struct resident_t {
 	unsigned int stage_id;
 	unsigned long hiscore;
 	score_t score_highest; // among all continues
-	uint16_t point_value;
+	uint32_t point_value;
 };
 
 extern resident_t __seg *resident;

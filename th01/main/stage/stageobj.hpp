@@ -62,7 +62,7 @@ enum card_cel_t {
 static const int CARD_HP_MAX = 5; // STAGE?.DAT only supports up to 4, though!
 extern uint8_t CARD_ANIM[CARD_HP_MAX][CARD_CELS]; // ACTUAL TYPE: main_ptn_t
 
-static const score_t CARD_SCORE_CAP = 25600;
+static const score_t CARD_SCORE_CAP = 9999990;
 
 // Stored outside the class for some reason... Only valid during the card flip
 // animation, and reset to 0 afterwards.

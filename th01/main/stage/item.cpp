@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "th01/resident.hpp"
 #include "th01/v_colors.hpp"
 #include "th01/math/clamp.hpp"
@@ -18,8 +20,10 @@
 static const pixel_t ITEM_W = PTN_W;
 static const pixel_t ITEM_H = PTN_H;
 
-static const unsigned int POINT_CAP = 65530;
-static const unsigned int POINT_CAP_DIGITS = digit_count(POINT_CAP);
+// I'm not sure whether one can gain 106 Point items with some crazy RNG 
+// manipulation, but I'm pretty sure one can't gain 1006 of them.
+static const unsigned long POINT_CAP = 9990000;
+static const unsigned int POINT_CAP_DIGITS = 7;
 
 static const pixel_t BOMB_COLLECT_1_W = shiftjis_w(BOMB_COLLECT_1);
 static const pixel_t BOMB_COLLECT_2_W = shiftjis_w(BOMB_COLLECT_2);
@@ -312,13 +316,8 @@ void point_hittest(int slot)
 
 	item_collect_init(items_point[slot]);
 
-	// Well… that's one way to prevent a unsigned 16-bit integer overflow.
-	if(resident->point_value < 59999) {
-		resident->point_value += (resident->point_value < 10000) ? 1000 : 10000;
-	}
-	if(resident->point_value >= 60000) {
-		resident->point_value = POINT_CAP;
-	}
+	resident->point_value += (resident->point_value < 10000) ? 1000 : 10000;
+
 	score += resident->point_value;
 	hud_score_and_cardcombo_render();
 	items_point[slot].flag = IF_COLLECTED_OVER_CAP;
@@ -362,7 +361,7 @@ void point_collect_update_and_render(int slot)
 		return;
 	}
 
-	str_right_aligned_from_uint16(str, resident->point_value, POINT_CAP_DIGITS);
+	sprintf(str, "%*lu", POINT_CAP_DIGITS, resident->point_value);
 	graph_putsa_fx(left, item.top, V_WHITE, str);
 
 	#undef left

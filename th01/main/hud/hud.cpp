@@ -195,10 +195,7 @@ void hud_score_and_cardcombo_render(void)
 		cardcombo_divisor = 10; // Must match CARDCOMBO_DIGITS!
 
 		for(digit = 0; digit < SCORE_DIGITS; digit++) {
-			if(digit_changed(score, score_prev, score_divisor)) {
-				score_bg(bg_put, digit, CUR_TOP, PTN_BG_CUR_SCORE);
-			}
-			score_divisor /= 10;
+			score_bg(bg_put, digit, CUR_TOP, PTN_BG_CUR_SCORE);
 		}
 		score_put(CUR_TOP, CUR_FX, score_prev);
 
