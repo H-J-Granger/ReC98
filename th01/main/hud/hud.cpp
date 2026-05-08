@@ -36,7 +36,7 @@ static const int PTN_LIFE_QUARTER = 0;
 static const int PTN_BOMB_QUARTER = 1;
 
 static const int16_t MAX_FX = (V_WHITE | FX_WEIGHT_BOLD);
-static const int16_t CUR_FX = (V_WHITE | FX_WEIGHT_BLACK);
+static const int16_t CUR_FX = (V_WHITE | FX_WEIGHT_BOLD);
 
 #if (PTN_QUARTER_W < GLYPH_FULL_W)
 #error Original code assumes PTN_QUARTER_W >= GLYPH_FULL_W
@@ -122,8 +122,29 @@ template <class T1, class T2> inline void fwnum_put(
 #define score_max_bg(func, digit) \
 	score_bg(func, digit, MAX_TOP, PTN_BG_MAX_SCORE)
 
-inline void score_put(screen_y_t top, int fx, const long &prev) {
-	fwnum_put(SCORE_LEFT, top, fx, SCORE_DIGITS, score, prev);
+void score_put(screen_y_t top, int fx, const long &prev) {
+	static const shiftjis_t* HALFWIDTH_NUMERAL[10] = {
+		"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+	};
+	static const shiftjis_t* COMMA = ",";
+	long tmp = score;
+	int digit_printed = 0;
+	screen_x_t x = SCORE_LEFT + SCORE_DIGITS * GLYPH_FULL_W - GLYPH_HALF_W;
+
+	if (tmp == 0) {
+		graph_putsa_fx(x, top, fx, HALFWIDTH_NUMERAL[0]);
+	}
+	while (tmp != 0) {
+		if (digit_printed > 0 && digit_printed % 3 == 0) {
+			graph_putsa_fx(x, top, fx, COMMA);
+			x -= GLYPH_HALF_W;
+		}
+		graph_putsa_fx(x, top, fx, HALFWIDTH_NUMERAL[tmp % 10]);
+		tmp /= 10;
+		digit_printed++;
+		x -= GLYPH_HALF_W;
+	}
+	return;
 }
 
 #define cardcombo_bg(func, digit, top, ptn_id) \
@@ -146,11 +167,8 @@ void hiscore_update_and_render(void)
 		return;
 	}
 	for(int i = 0; i < SCORE_DIGITS; i++) {
-		if(digit_changed(score, prev, divisor)) {
-			page_access(1);	score_max_bg(bg_put, i);
-			page_access(0);	score_max_bg(bg_put, i);
-		}
-		divisor /= 10;
+		page_access(1);	score_max_bg(bg_put, i);
+		page_access(0);	score_max_bg(bg_put, i);
 	}
 	page_access(1);	score_put(MAX_TOP, MAX_FX, prev);
 	page_access(0);	score_put(MAX_TOP, MAX_FX, prev);
@@ -232,7 +250,7 @@ inline void cardcombo_bg_snap_and_put(screen_y_t top, int fx) {
 		score_bg(bg_snap, digit, top, ptn_id); \
 	} \
 	page_access(0); \
-	graph_putfwnum_fx(SCORE_LEFT, top, fx, SCORE_DIGITS, score, 0, true);
+	score_put(top, fx, score);
 
 // Setting [first_run] to false will only reset the card combo display.
 void score_and_cardcombo_bg_snap_and_put(bool16 first_run)
