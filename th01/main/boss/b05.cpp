@@ -644,6 +644,14 @@ void singyoku_main(void)
 	} hit = { false };
 	static bool16 initial_hp_rendered = false;
 
+	#ifdef THPRAC98_INJECTED
+	// 2269:08C6
+	if (thprac98::shingyoku_init_flag) {
+		boss_hp = thprac98::hp_slider.value;
+		thprac98::shingyoku_init_flag = false;
+	}
+	#endif 
+
 	// Entrance animation
 	if(boss_phase == 0) {
 		ent.cur_left = BASE_LEFT;
@@ -659,7 +667,11 @@ void singyoku_main(void)
 		int rotation_interval = 18;
 
 		boss_phase_frame = 0;
+		#ifdef THPRAC98_NO_SHINGYOKU_ENTRANCE_ANIMATION
+		while(false) {
+		#else 
 		while(boss_phase_frame < 200) {
+		#endif
 			// Different function for a change?
 			ent_sphere.locked_unput_and_put_8();
 
@@ -712,9 +724,11 @@ void singyoku_main(void)
 		// Using the invincibility frame? That's unique. Works though, as it's
 		// impossible in the original game to hit SinGyoku within the first 8
 		// frames.
+		#ifndef THPRAC98_SKIP_SHINGYOKU_P1
 		hud_hp_increment_render(
 			initial_hp_rendered, boss_hp, invincibility_frame
 		);
+		#endif
 
 		phase.frame_common();
 		if(phase.pattern_cur == 0) {
@@ -746,6 +760,14 @@ void singyoku_main(void)
 			}
 		}
 	} else if(boss_phase == 2) {
+		#ifdef THPRAC98_SKIP_SHINGYOKU_P1
+		// 2269:0B13
+		if (thprac98::shingyoku_rerender_hp_flag) {
+			thprac98::shingyoku_rerender_hp_flag = false;
+			hud_hp_rerender(boss_hp);
+		}
+		#endif
+
 		phase.frame_common();
 		if(phase.pattern_cur == 0) {
 			pattern_chasing_pellets();
@@ -761,7 +783,13 @@ void singyoku_main(void)
 
 		if(boss_phase_frame == 0) {
 			// Cycle between pattern 4 and any non-4 pattern
+			// change (irand() % 4) to a fixed pattern value
+			#ifdef THPRAC98_INJECTED
+			phase.pattern_cur = (phase.pattern_cur == 4) ? 
+									(thprac98::injected_irand() % 4) : 4;
+			#else
 			phase.pattern_cur = (phase.pattern_cur == 4) ? (irand() % 4) : 4;
+			#endif
 		}
 
 		hit.update_and_render(flash_colors);
