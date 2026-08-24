@@ -604,6 +604,16 @@ inline void missile_pairs_shift_angle_1_clock(
 	} \
 }
 
+#ifdef THPRAC98_INJECTED
+#define thprac98_increase(var) { \
+	if (thprac98::time_lock_state) { \
+		++var;  \
+	} \
+}
+#else
+#define thprac98_increase(var) 
+#endif
+
 // Processes a single frame of the missile pair pattern. [subphase] cycles
 // between the fields of missile_subphase_t, offset by randomly selected
 // variations. These can be differentiated in [shift_angle_1_func] and
@@ -615,6 +625,7 @@ inline void missile_pairs_shift_angle_1_clock(
 	angle_southwest, \
 	angle_southeast, \
 	iterations_done, \
+	thprac98_iterations_done, \
 	variations_max, \
 	shift_angle_1_func, \
 	shift_angle_2_func \
@@ -680,6 +691,7 @@ inline void missile_pairs_shift_angle_1_clock(
 				missile_pairs_fired_in_subphase = 0; \
 				boss_phase_frame = 0; \
 				iterations_done++; \
+				thprac98_increase(thprac98_iterations_done); \
 			} \
 		} \
 	} \
@@ -1341,6 +1353,29 @@ void yuugenmagan_main(void)
 
 	Missiles.unput_update_render();
 
+	#ifdef THPRAC98_INJECTED
+	if (thprac98::cur_ui_boss == UI_YUUGENMAGAN && thprac98::boss_init_flag) {
+		thprac98::boss_init_flag = false;
+		if (thprac98::phase_slider.value != 1) {
+			boss_phase = (thprac98::phase_slider.value - 1) * 2;
+			stage_palette[COL_YOKOSHIMA].c.r = 
+				thprac98::yuugenmagan_yokoshima_color[
+					thprac98::phase_slider.value - 2
+				].r;
+			stage_palette[COL_YOKOSHIMA].c.g = 
+				thprac98::yuugenmagan_yokoshima_color[
+					thprac98::phase_slider.value - 2
+				].g;
+			stage_palette[COL_YOKOSHIMA].c.b = 
+				thprac98::yuugenmagan_yokoshima_color[
+					thprac98::phase_slider.value - 2
+				].b;
+			hud_hp_rerender(thprac98::hp_slider.value);
+			boss_hp = thprac98::hp_slider.value;
+		}
+	}
+	#endif
+
 	if(boss_phase == 0) {
 		// Downwards lasers from every eye, in a symmetric sequence from the
 		// left and right edges of the playfield towards the center
@@ -1469,10 +1504,11 @@ void yuugenmagan_main(void)
 		if(
 			(boss_hp <= HP_PHASE_1_END) || 
 			(thprac98::yuugenmagan_p1_frame_elapsed > 1100)
-		) {
+		)
 		#else 
-		if((boss_hp <= HP_PHASE_1_END) || (boss_phase_frame > 1100)) {
-		#endif 
+		if((boss_hp <= HP_PHASE_1_END) || (boss_phase_frame > 1100))
+		#endif
+		{ 
 			phase.next(2);
 		}
 	} else if(boss_phase == 2) {
@@ -1497,10 +1533,6 @@ void yuugenmagan_main(void)
 		// Reimu's tracked position and then towards it
 
 		phase.frame_common();
-		#if defined(THPRAC98_INJECTED) && !defined(THPRAC98_TIMELOCK)
-		// Add `++thprac98::yuugenmagan_p2_iterations_done;` next to the 
-		// `++u3.iterations_done` of the expansion of the following macro.
-		#endif 
 		pattern_missile_pairs_from_south(
 			u2.subphase,
 			u1.missile_pairs_fired_in_subphase,
@@ -1508,6 +1540,7 @@ void yuugenmagan_main(void)
 			angle.missile_southwest,
 			angle_missile_southeast,
 			u3.iterations_done,
+			thprac98::yuugenmagan_p2_iterations_done,
 			3,
 			missile_pairs_shift_angle_1_away,
 			missile_pairs_shift_angle_2_towards
@@ -1517,10 +1550,11 @@ void yuugenmagan_main(void)
 		if(
 			(boss_hp <= HP_PHASE_3_END) || 
 			(thprac98::yuugenmagan_p2_iterations_done >= 5)
-		) {
+		)
 		#else 
-		if((boss_hp <= HP_PHASE_3_END) || (u3.iterations_done >= 5)) {
+		if((boss_hp <= HP_PHASE_3_END) || (u3.iterations_done >= 5))
 		#endif
+		{
 			phase.next(4);
 		}
 	} else if(boss_phase == 4) {
@@ -1626,10 +1660,11 @@ void yuugenmagan_main(void)
 		if(
 			(boss_hp <= HP_PHASE_5_END) || 
 			(thprac98::yuugenmagan_p3_iterations_done > 4)
-		) {
+		)
 		#else
-		if((boss_hp <= HP_PHASE_5_END) || (u3.iterations_done > 4)) {
+		if((boss_hp <= HP_PHASE_5_END) || (u3.iterations_done > 4))
 		#endif 
+		{
 			phase.next(6);
 		}
 	} else if(boss_phase == 6) {
@@ -1654,10 +1689,6 @@ void yuugenmagan_main(void)
 		// Missiles from the southern eyes, with (counter)clockwise angle shifts
 
 		phase.frame_common();
-		#if defined(THPRAC98_INJECTED) && !defined(THPRAC98_TIMELOCK)
-		// Add `++thprac98::yuugenmagan_p4_iterations_done;` next to the 
-		// `++u3.iterations_done` of the expansion of the following macro.
-		#endif 
 		pattern_missile_pairs_from_south(
 			u2.subphase,
 			u1.missile_pairs_fired_in_subphase,
@@ -1665,6 +1696,7 @@ void yuugenmagan_main(void)
 			angle.missile_southwest,
 			angle_missile_southeast,
 			u3.iterations_done,
+			thprac98::yuugenmagan_p4_iterations_done,
 			2,
 			missile_pairs_shift_angle_1_clock,
 			missile_pairs_shift_angle_2_clock
