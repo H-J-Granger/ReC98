@@ -907,7 +907,16 @@ int phase_1(int id)
 		// Note that this includes `CHOOSE_NEW`. Due to how phase_frame_common()
 		// switches between patterns and teleporting, this adds a 25% chance of
 		// Elis skipping an attack cycle and teleporting again.
+		#ifdef THPRAC98_INJECTED
+		if (thprac98::current_ui_boss == UI_ELIS &&
+			thprac98::p1_attack.value != 0) {
+			return (thprac98::p1_attack.value % 4);
+		} else {
+			return (irand() % 4);
+		}
+		#else
 		return (irand() % 4);
+		#endif 
 	case 1: return pattern_11_lasers_across();
 	case 2: return pattern_random_downwards_missiles();
 	case 3: return pattern_pellets_along_circle();
@@ -1217,7 +1226,16 @@ int phase_3(int id)
 		// Note that this includes `CHOOSE_NEW`. Due to how phase_frame_common()
 		// switches between patterns and teleporting, this adds a 25% chance of
 		// Elis skipping an attack cycle and teleporting again.
+		#ifdef THPRAC98_INJECTED
+		if (thprac98::current_ui_boss == UI_ELIS &&
+			thprac98::p2_attack.value != 0) {
+			return (thprac98::p2_attack.value % 4);
+		} else {
+			return (irand() % 4);
+		}
+		#else
 		return (irand() % 4);
+		#endif
 	case 1: /* return */ star_of_david_then(pattern_cur, 1,
 		pattern_curved_5_stack_rings
 	);
@@ -1694,6 +1712,14 @@ elis_phase_5_subphase_t phase_5_girl(bool16 reset = false)
 	switch(pattern_cur) {
 	case CHOOSE_NEW:
 		// In contrast to phases 1 and 3, no pattern cycle is skipped here.
+		#ifdef THPRAC98_INJECTED
+		if (thprac98::current_ui_boss == UI_ELIS &&
+			thprac98::p3g_attack.value != 0) {
+			pattern_bat_cur = thprac98::p3g_attack.value % 3 + 1;
+		} else {
+			pattern_bat_cur = irand() % 3 + 1;
+		}
+		#else
 		pattern_cur = ((irand() % 3) + 1);
 		break;
 	case 1: /* return */ star_of_david_then(subphase, pattern_cur,
@@ -1733,7 +1759,16 @@ void phase_5(
 			if(pattern_bat_cur == CHOOSE_NEW) {
 				// In contrast to phases 1 and 3, no pattern cycle is skipped
 				// here.
+				#ifdef THPRAC98_INJECTED
+				if (thprac98::current_ui_boss == UI_ELIS &&
+					thprac98::p3b_attack.value != 0) {
+					pattern_bat_cur = thprac98::p3b_attack.value % 4 + 1;
+				} else {
+					pattern_bat_cur = irand() % 4 + 1;
+				}
+				#else
 				pattern_bat_cur = ((irand() % 4) + 1);
+				#endif
 			}
 			switch(pattern_bat_cur) {
 			case 1:
@@ -1905,7 +1940,12 @@ void elis_main(void)
 
 		angle = 0x00;
 		entrance_tick = 0;
-		while(1) {
+		#ifdef THPRAC98_NO_ELIS_ENTRANCE_ANIMATION
+		while(0) 
+		#else 
+		while(1)
+		#endif 
+		{
 			entrance_tick++;
 			for(int i = 0; i < SPHERE_COUNT; i++) {
 				head_left = polar_x(
@@ -1963,8 +2003,13 @@ void elis_main(void)
 
 		#define entrance_frame hit.invincibility_frame
 
+		#ifdef THPRAC98_NO_ELIS_ENTRANCE_ANIMATION
+		entrance_frame = KEYFRAME_SLIGHT_RIPPLE - 1;
+		trails_offscreen = true;
+		#else
 		entrance_frame = 0;
 		trails_offscreen = false;
+		#endif
 		while(1) {
 			entrance_frame++;
 			if(!trails_offscreen && ((entrance_frame % MOVE_INTERVAL) == 0)) {
@@ -2065,6 +2110,20 @@ void elis_main(void)
 
 		phase.teleport_done = false;
 		phase.cur.pattern = 1;
+		#ifdef THPRAC98_INJECTED
+		if (thprac98::cur_ui_boss == UI_ELIS) {
+			if (thprac98::phase_slider.value != 1) {
+				hud_hp_rerender(thprac98::hp_slider.value);
+			}
+			boss_hp = thprac98::hp_slider.value;
+			boss_phase = thprac98::elis_boss_phase_val_of_each_stages
+				[thprac98::phase_slider.value - 1];
+			if (thprac98::phase_slider.value == 3) {
+				form = F_GIRL;
+				ent_still_or_wave.unput_8(C_STILL);
+			}
+		}
+		#endif
 		initial_hp_rendered = false;
 	} else if(boss_phase == 1) {
 		// ZUN bug: Since the fight only ends in Phase 5 at the earliest, HP
