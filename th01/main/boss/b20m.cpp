@@ -299,8 +299,17 @@ void sariel_entrance(int8_t)
 
 	text_fillca(' ', (TX_BLACK | TX_REVERSE));
 
+	#ifdef THPRAC98_SKIP_OPENING_ANIMATION
+	// sariel_draw_background
+
+	/* graph_accesspage_func(0); */
+	grp_put_palette_show(BG_IMAGES[thprac98::phase_slider.value - 1]);
+	graph_accesspage_func(1);
+	grp_put_palette_show(BG_IMAGES[thprac98::phase_slider.value - 1]);
+	#else
 	/*  graph_accesspage_func(0);  */	grp_put_palette_show("boss6_l.grp");
 	/**/graph_accesspage_func(1)/**/;	grp_put_palette_show("boss6_h.grp");
+	#endif
 
 	graph_accesspage_func(0);
 	stageobjs_init_and_render(BOSS_STAGE);
@@ -310,6 +319,8 @@ void sariel_entrance(int8_t)
 
 	text_fillca(' ', TX_WHITE);
 
+	// sariel_skip_opening_part3
+	#ifndef THPRAC98_SKIP_OPENING_ANIMATION
 	// Scroll
 	// ------
 
@@ -325,6 +336,7 @@ void sariel_entrance(int8_t)
 	grp_put_palette_show(BG_IMAGES[0]);
 	graph_accesspage_func(0);
 	pagetrans_diagonal_8x8(40);
+	#endif
 
 	random_seed = frame_rand;
 }
@@ -2529,6 +2541,31 @@ void sariel_main(void)
 		}
 
 		void pattern_next(int ring_min, int ring_max) {
+			#ifdef THPRAC98_INJECTED
+			// sariel_select_form_1_attack, sariel_select_form_2_attack, 
+			// sariel_select_form_3_attack, sariel_select_form_4_attack
+
+			// This function is inlined, here is a combined logic of the 4
+			// procedures listed above...
+			static const struct thprac98::ui_slider *[4] = {
+				thprac98::p1_slider, thprac98::p2_slider, thprac98::p3_slider,
+				thprac98::p4_slider};
+			thprac98::ui_slider *px_attack = ui_slider[(boss_phase + 1) / 2];
+			if (px_attack.value != 0) {	 // fix attack
+				if ((boss_phase + 1) / 2 == 3 && px_attack.value == 2) {
+					pattern_cur = 3 - pattern_cur;
+				}  // else { (pattern_cur unmodified) }
+			} else {
+				if (ring_max == 1) {
+					pattern_cur = (1 - pattern_cur);
+				} else {
+					// The ring_min here when boss_phase==5 is changed to 0,
+					// to avoid Sariel stopping attack after 5 attacks.
+					pattern_cur = (pattern_cur == ring_max) ? ring_min
+															: (pattern_cur + 1);
+				}
+			}
+			#else 
 			if(ring_max == 1) {
 				pattern_cur = (1 - pattern_cur);
 			} else {
@@ -2536,6 +2573,7 @@ void sariel_main(void)
 					? ring_min
 					: (pattern_cur + 1);
 			}
+			#endif
 			// ZUN quirk: Modifying this variable during the second form also
 			// causes the pulse effect to switch its fade direction. Might have
 			// even been sort of intended.
@@ -2543,6 +2581,23 @@ void sariel_main(void)
 		}
 	} phase = { 0, 0, 0 };
 
+	#ifdef THPRAC98_INJECTED
+	#define phase_form1_next_if_done(next_phase, next_pattern) { \
+		if(boss_hp <= 0) { \
+			boss_phase = PHASE_FORM1_DEFEATED; \
+		} \
+		if( \
+			!thprac98::lock_form && \
+			phase.u1.patterns_done >= phase.patterns_until_next && \
+			!invincible \
+		) { \
+			phase.u1.patterns_done = 0; \
+			boss_phase = next_phase; \
+			phase.pattern_cur = next_pattern; \
+			boss_phase_frame = 0; \
+		} \
+	}
+	#else 
 	#define phase_form1_next_if_done(next_phase) { \
 		if(boss_hp <= 0) { \
 			boss_phase = PHASE_FORM1_DEFEATED; \
@@ -2557,6 +2612,7 @@ void sariel_main(void)
 			boss_phase_frame = 0; \
 		} \
 	}
+	#endif 
 
 	unsigned int i;
 	const vc_t flash_colors[3] = { 3, 4, 5 };
@@ -2599,17 +2655,48 @@ void sariel_main(void)
 			#define frame_half	boss_phase_frame
 
 			unsigned int tmp;
+			
+			#ifdef THPRAC98_SKIP_OPENING_PART4
+			goto sariel_init_label;
+			#endif
 
 			frame_half++;
 			if(entrance_rings_update_and_render(
 				entrance_ring_radius_base, i, tmp, frame_half, 16, 1
 			)) {
+				#ifdef THPRAC98_SKIP_OPENING_PART4
+				sariel_init_label:;
+				#endif
 				boss_phase = 1;
 				phase.pattern_cur = 0;
 				phase.u1.patterns_done = 0;
+				#ifdef THPRAC98_INJECTED
+				// sariel_init_proc
+				if (thprac98::sariel_phase_slider.value != 2) {
+					// regular stage
+					boss_phase = thprac98::phase_slider.value;
+					boss_hp = thprac98::boss_hp.value;
+					phase.patterns_until_next =
+						((irand() % thprac98::sariel_max_attack_in_phases
+										[thprac98::phase_slider.value - 1]) +
+						1);
+					boss_phase_frame = 0;
+					initial_hp_rendered = 0;
+					thprac98::sariel_get_first_atk(
+						thprac98::phase_slider.value);
+					if (thprac98::phase_slider.value != 1) {
+						hud_hp_rerender(thprac98::hp_slider.value);
+					}
+				} else {
+					// hidden stage
+					boss_phase = PHASE_FORM1_DEFEATED;
+					boss_hp = thprac98::hp_slider.value;
+				}
+				#else 
 				phase.patterns_until_next = ((irand() % 6) + 1);
 				boss_phase_frame = 0;
 				initial_hp_rendered = 0;
+				#endif
 				boss_palette_show(); // Unnecessary.
 				ent_shield.pos_cur_set(SHIELD_LEFT, SHIELD_TOP);
 				wand_lowered_snap();
@@ -2640,7 +2727,12 @@ entrance_rings_still_active:
 			phase.pattern_next(0, 2);
 		}
 		hit.update_and_render(flash_colors);
+		#ifdef THPRAC98_INJECTED
+		// sariel_set_form_1_first_attack
+		phase_form1_next_if_done(2, thprac98::sariel_get_first_atk(1));
+		#else
 		phase_form1_next_if_done(2);
+		#endif 
 	} else if(boss_phase == 2) {
 		phase.frame_bg_transition(1);
 		if(boss_phase_frame == 0) {
@@ -2668,7 +2760,28 @@ entrance_rings_still_active:
 			phase.pattern_next(0, 1);
 		}
 		hit.update_and_render(flash_colors);
+		#ifdef THPRAC98_INJECTED
+		// sariel_set_form_2_to_4_first_attack
+
+		// In the compiled binary, the following part of the expansion of this
+		// macro in branches boss_phase==3,5,7 are merged into one (i.e. instead
+		// of copying this part multiple times, the compiler copied the jump to
+		// the following part): {
+		// phase.u1.patterns_done = 0; 
+		//  boss_phase = next_phase; 
+		//  phase.pattern_cur = 0; 
+		//  boss_phase_frame = 0;
+		//  // (and then the control flow goes to the end of this function)
+		// }
+		//
+		// Thus, we can't use a constant argument to 
+		// thprac98::sariel_get_first_atk like we've done in the previous 
+		// branch.
+		phase_form1_next_if_done(
+			4, thprac98::sariel_get_first_atk((boss_phase + 1) / 2));
+		#else
 		phase_form1_next_if_done(4);
+		#endif
 	} else if(boss_phase == 4) {
 		phase.frame_bg_transition(2);
 		if(boss_phase_frame == 0) {
@@ -2700,7 +2813,15 @@ entrance_rings_still_active:
 			phase.pattern_next(10, 5); // ???
 		}
 		hit.update_and_render(flash_colors);
+		#ifdef THPRAC98_INJECTED
+		// sariel_set_form_2_to_4_first_attack
+
+		// See the comment above in the branch (boss_phase == 3)
+		phase_form1_next_if_done(
+			6, thprac98::sariel_get_first_atk((boss_phase + 1) / 2));
+		#else
 		phase_form1_next_if_done(6);
+		#endif
 	} else if(boss_phase == 6) {
 		phase.frame_bg_transition(3);
 		if(boss_phase_frame == 0) {
@@ -2725,7 +2846,15 @@ entrance_rings_still_active:
 			phase.pattern_next(0, 2);
 		}
 		hit.update_and_render(flash_colors);
+		#ifdef THPRAC98_INJECTED
+		// sariel_set_form_2_to_4_first_attack
+
+		// See the comment above in the branch (boss_phase == 3)
+		phase_form1_next_if_done(
+			8, thprac98::sariel_get_first_atk((boss_phase + 1) / 2));
+		#else
 		phase_form1_next_if_done(8);
+		#endif
 	} else if(boss_phase == 8) {
 		phase.frame_bg_transition(0);
 		if(boss_phase_frame == 0) {
@@ -2734,7 +2863,12 @@ entrance_rings_still_active:
 			phase.patterns_until_next = ((irand() % 6) + 1);
 		}
 	} else if(boss_phase == PHASE_FORM1_DEFEATED) {
+		#ifdef THPRAC98_SKIP_FAKE_DEATH
+		// sariel_skip_fake_death_part1
+		boss_phase_frame = 200;
+		#else
 		boss_phase_frame = 0;
+		#endif 
 
 		// Not that this variable is ever read from, before it's set back to 0
 		// at the end of the transition animation.
@@ -2815,7 +2949,9 @@ entrance_rings_still_active:
 				boss_palette_snap();
 				stage_palette_set(z_Palettes);
 
+				#ifndef THPRAC98_INJECTED
 				boss_hp = 6;
+				#endif
 				hud_hp_first_white = 10;
 				hud_hp_first_redwhite = 3;
 				initial_hp_rendered = false;
