@@ -1250,7 +1250,19 @@ void mima_main(void)
 			frame_delay(2);
 		}
 		boss_phase = 1;
+		#ifdef THPRAC98_INJECTED
+		boss_phase = thprac98::phase_slider.value * 2 - 1;
+		thprac98::ui_slider *ui_slider_tmp =
+			(boss_phase == 1) ? thprac98::p1_attack : thprac98::p2_attack;
+		phase.pattern_cur =
+			(ui_slider_tmp->value != 0) ? (ui_slider_tmp->value - 1) : 0;
+		boss_hp = thprac98::hp_slider.value;
+		if (thprac98::phase_slider.value != 1) {
+			hud_hp_rerender(boss_hp);
+		}
+		#else 
 		phase.pattern_cur = 0;
+		#endif
 		initial_hp_rendered = false;
 		stage_palette_set(z_Palettes);
 		boss_palette_snap();
@@ -1286,7 +1298,13 @@ void mima_main(void)
 		// phase until the current pattern is done to make sure that everything
 		// is cleaned up.
 		if(boss_phase_frame == 0) {
+			#ifdef THPRAC98_INJECTED
+			if (thprac98::p1_attack.value == 0) {
+				phase.pattern_next(4);
+			}
+			#else
 			phase.pattern_next(4);
+			#endif 
 			if(boss_hp <= HP_PHASE_1_END) {
 				phase.pattern_cur = 99;
 			}
@@ -1309,6 +1327,11 @@ void mima_main(void)
 		phase_spreadin(BASE_LEFT, BASE_TOP);
 		if(boss_phase_frame == 0) {
 			phase.next(3);
+			#ifdef THPRAC98_INJECTED
+			phase.pattern_cur = (thprac98::p2_attack->value != 0)
+									? (thprac98::p2_attack->value - 1)
+									: 0;
+			#endif
 		}
 	} else if(boss_phase == 3) {
 		phase.frame_common();
@@ -1324,7 +1347,13 @@ void mima_main(void)
 		}
 
 		if(boss_phase_frame == 0) {
+			#ifdef THPRAC98_INJECTED
+			if (thprac98::p2_attack.value == 0) {
+				phase.pattern_next(4);
+			}
+			#else
 			phase.pattern_next(4);
+			#endif
 		}
 
 		hit.update_and_render(flash_colors);
