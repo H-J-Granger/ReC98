@@ -65,7 +65,7 @@ static const size_t TRACK_COUNT = (
 // Colors
 // ------
 // The Music Room only redraws text whenever it changes, but fully redraws the
-// B plane on every frame – first by blitting [nopoly_B], then by drawing the
+// B plane on every frame 驕ｯ�ｽｶ�ｿｽ�ｽｿ�ｽｽ first by blitting [nopoly_B], then by drawing the
 // polygons on top. This places the following constraints on text colors:
 // 1) Colors 0 or 1 can't be used, because those don't include any of the bits
 //    that can stay constant between frames.
@@ -415,6 +415,11 @@ void near cmt_unput(void)
 #endif
 }
 
+extern "C" void pascal cmt_put_graph_putsa_fx_patched(screen_x_t left,
+                                                      vram_y_t top,
+                                                      int16_t col_and_fx,
+                                                      const shiftjis_t *str);
+
 void near cmt_put(void)
 {
 #if (GAME >= 4)
@@ -422,12 +427,18 @@ void near cmt_put(void)
 #else
 	static const int16_t FX = FX_WEIGHT_HEAVY;
 #endif
+#if (GAME == 3)
+	cmt_put_graph_putsa_fx_patched(
+		CMT_TITLE_LEFT, CMT_TITLE_TOP, (COL_CMT_TRACK | FX), cmt[0].c
+	);
+#else
 	graph_putsa_fx(
 		CMT_TITLE_LEFT, CMT_TITLE_TOP, (COL_CMT_TRACK | FX), cmt[0].c
 	);
-	const cmt_line_t *cmt_p = &cmt[1];
-	screen_y_t top = CMT_COMMENT_TOP;
-	for(int line = 1; line < CMT_LINES; line++) {
+#endif 
+	const cmt_line_t *cmt_p = &cmt[2];
+	screen_y_t top = CMT_COMMENT_TOP + GLYPH_H;
+	for(int line = 2; line < CMT_LINES; line++) {
 		if(!((GAME >= 4) && (cmt_p->c[0] == ';'))) {
 			graph_putsa_fx(
 				CMT_COMMENT_LEFT, top, (COL_CMT_COMMENT | FX), cmt_p->c
@@ -485,14 +496,14 @@ void pascal near cmt_unput_and_put(void)
 // keys have been released. However, due to the different sensing functions,
 // the actual handling of held keys differs depending on the game:
 //
-// • TH02 and TH04 use raw input sensing functions that don't address the
+// 驕ｯ�ｽｶ�ｿｽ�ｽｽ�ｽ｢ TH02 and TH04 use raw input sensing functions that don't address the
 //   hardware quirk documented in the `Research/HOLDKEY` example. Therefore,
 //   the eventual key release scancode for a held key is not filtered and gets
 //   through to [key_det], breaking the spinning loop despite the key still
 //   being held.
-// • In TH03 and TH05, this eventual key release scancode is accurately
+// 驕ｯ�ｽｶ�ｿｽ�ｽｽ�ｽ｢ In TH03 and TH05, this eventual key release scancode is accurately
 //   detected and filtered. Thus, held keys truly don't have any effect, but at
-//   the cost of an additional 614.4 µs for every call to this function.
+//   the cost of an additional 614.4 �ｿｽ�ｽｾ繧托ｽｽ�ｽｵs for every call to this function.
 inline void music_input_sense(void) {
 #if (GAME == 5)
 	input_reset_sense_held();
@@ -593,7 +604,7 @@ void MUSICROOM_DISTANCE musicroom_menu(void)
 	palette_100();
 
 	while(1) {
-		// In TH05, this loop also ignores any ← or → inputs while ↑ or ↓ are
+		// In TH05, this loop also ignores any 驕ｶ螂��ｽｿ�ｽｽ or 驕ｶ螂��ｽｿ�ｽｽ inputs while 驕ｶ螂��ｽｿ�ｽｽ or 驕ｶ螂��ｽｿ�ｽｽ are
 		// held, and vice versa.
 		// ZUN bloat: None of this `goto` business would have been necessary if
 		// the loop clearly defined its update and render steps. Especially
@@ -628,13 +639,13 @@ controls:
 					track_id_at_top = music_sel;
 					tracklist_unput_and_put_both_animate(music_sel);
 
-					// ZUN quirk: This prevents game switches via ← or → , but
+					// ZUN quirk: This prevents game switches via 驕ｶ螂��ｽｿ�ｽｽ or 驕ｶ螂��ｽｿ�ｽｽ , but
 					// only in the very specific case of
 					// 1) the cursor being at the top of the list,
 					// 2) highlighting a track other than the first one of the
 					//    respective game, and
-					// 3) ←/→ being pressed simultaneously with ↑.
-					//    In any other case, ←/→ are processed as expected, and
+					// 3) 驕ｶ螂��ｽｿ�ｽｽ/驕ｶ螂��ｽｿ�ｽｽ being pressed simultaneously with 驕ｶ螂��ｽｿ�ｽｽ.
+					//    In any other case, 驕ｶ螂��ｽｿ�ｽｽ/驕ｶ螂��ｽｿ�ｽｽ are processed as expected, and
 					//    override this cursor movement with a game switch.
 					goto skip_processing_of_left_and_right;
 				} else {
@@ -662,7 +673,7 @@ controls:
 					// corresponding very specific case of
 					// 1) the cursor being at the bottom of the list,
 					// 2) highlighting anything except [SEL_QUIT], and
-					// 3) ←/→ being pressed simultaneously with ↓.
+					// 3) 驕ｶ螂��ｽｿ�ｽｽ/驕ｶ螂��ｽｿ�ｽｽ being pressed simultaneously with 驕ｶ螂��ｽｿ�ｽｽ.
 					goto skip_processing_of_left_and_right;
 				} else {
 					track_unput_and_put_both_animate(sel_prev, music_sel);
@@ -718,7 +729,7 @@ controls:
 #else
 				// Load both the MIDI and PMD versions of the selected track.
 				// Makes sense given that the track continues playing when
-				// leaving the Music Room – changing the music mode in the
+				// leaving the Music Room 驕ｯ�ｽｶ�ｿｽ�ｽｿ�ｽｽ changing the music mode in the
 				// Option menu will then play the same selected track.
 				bool midi_active = snd_midi_active;
 				snd_midi_active = snd_midi_possible;

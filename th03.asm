@@ -2767,6 +2767,8 @@ SPANISH_TRANSLATION_TEXT	segment byte public 'DATA' use16
 public FONT_READ_PATCHED
 public _uppercase_n_tilde_glyph
 public _lowercase_n_tilde_glyph
+public CMT_PUT_GRAPH_PUTSA_FX_PATCHED
+
 ; Get the de-mangled C++ name by tdump -m 
 extern @FONT_READ$QM12FONT_GLYPH_TUI:proc  ; unused, I end up rewriting it
 
@@ -3326,6 +3328,29 @@ local   @@temp_ax:word
         pop     bp
         ret
 print_title_and_name endp
+
+CMT_PUT_GRAPH_PUTSA_FX_PATCHED proc far
+arg @@str:dword, @@col_and_fx:word, @@top:word, @@left:word
+        ; The assembly of the first [graph_putsa_fx] call in [cmt_put].
+        push    1300040h
+        push    1Fh
+        push    [word ptr ds:35EAh]
+        push    0
+        call    @graph_putsa_fx$qiiinxuc
+
+        ; The assembly of the first [graph_putsa_fix] call in [cmt_put], if it
+        ; is modified as { cmt_put_graph_putsa_fx_patched(
+	;      CMT_TITLE_LEFT + GLYPH_H, CMT_TITLE_TOP, (COL_CMT_TRACK | FX), 
+        ;      cmt[0].c
+	; ); } .
+        push    1300050h
+        push    1Fh
+        push    [word ptr ds:35EAh]
+        push    2Ah
+        call    @graph_putsa_fx$qiiinxuc
+
+        ret     10
+CMT_PUT_GRAPH_PUTSA_FX_PATCHED endp 
 
 SPANISH_TRANSLATION_TEXT	ends
 
