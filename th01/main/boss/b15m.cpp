@@ -1721,6 +1721,7 @@ elis_phase_5_subphase_t phase_5_girl(bool16 reset = false)
 		}
 		#else
 		pattern_cur = ((irand() % 3) + 1);
+		#endif
 		break;
 	case 1: /* return */ star_of_david_then(subphase, pattern_cur,
 		pattern_three_symmetric_4_stacks_then_symmetric_arc
