@@ -1,6 +1,10 @@
 /// Jigoku Stage 15 Boss - Kikuri
 /// -----------------------------
 
+#ifdef THPRAC98_INJECTED
+#include <string.h>
+#endif
+
 #include "th01/main/boss/palette.cpp"
 
 #include "x86real.h"
@@ -968,6 +972,19 @@ void kikuri_main(void)
 		z_palette_set_show( 8, RGB4::max(), RGB4::max(), RGB4::max());
 		z_palette_set_show(11, RGB4::max(), RGB4::max(), RGB4::max());
 
+		#ifdef THPRAC98_INJECTED
+		if (!thprac98::kikuri_do_skip_opening) {
+			graph_accesspage_func(1);
+			graph_copy_accessed_page_to_other();
+			graph_accesspage_func(0);
+			player_put_default();
+			orb_put_default();
+			hit.invincibility_frame = 0;
+			boss_phase_frame = 0;
+			goto stage_2_initialize;
+		}
+		#endif
+
 		while(1) {
 			boss_phase_frame++;
 			if((boss_phase_frame % 3) == 0) {
@@ -1015,11 +1032,33 @@ void kikuri_main(void)
 			if(entrance_rings_update_and_render(
 				entrance_ring_radius_base, i, tmp, frame_half, 0, 70
 			)) {
+				stage_2_initialize:
 				boss_phase = 2;
 				phase.patterns_done = 0;
 				boss_phase_frame = 0;
 				boss_palette_show();
 				initial_hp_rendered = false;
+				#ifdef THPRAC98_INJECTED
+				boss_hp = thprac98::hp_slider.value;
+				boss_phase = thprac98::kikuri_internal_phases
+					[thprac98::phase_slider.value - 1];
+				if (boss_phase == 6) {
+					if (thprac98::p4_attack.value != 0) {
+						phase.u1.phase_6_pattern =
+							thprac98::p4_attack.value - 1;
+					} else {
+						phase.u1.phase_6_pattern = 0;
+					}
+				}
+				if (thprac98::phase_slider.value != 1) {
+					hud_hp_rerender(boss_hp);
+				}
+				if (thprac98::phase_slider.value >= 3) {
+					_fmemcpy((void far *)(souls_raw),
+							 (const void far *)(thprac98::kikuri_p3_souls),
+							 0x64);
+				}
+				#endif 
 				stage_palette_set(z_Palettes);
 				break;
 			}
@@ -1058,10 +1097,22 @@ entrance_rings_still_active:
 		hit.update_and_render(flash_colors);
 		if(boss_phase_frame == 0) {
 			phase.patterns_done++;
+			#ifdef THPRAC98_INJECTED
+			if (!thprac98::timelocked) {
+				thprac98::patterns_done++;
+			}
+			#endif 
 		}
+		#ifdef THPRAC98_INJECTED
+		if(!hit.invincible && (
+			(boss_hp <= HP_PHASE_2_END) || (thprac98::patterns_done >= 6)
+		)) 
+		#else
 		if(!hit.invincible && (
 			(boss_hp <= HP_PHASE_2_END) || (phase.patterns_done >= 6)
-		)) {
+		))
+		#endif
+		{
 			boss_phase = 3;
 			boss_phase_frame = 0;
 			hit.invincibility_frame = 0;
@@ -1106,18 +1157,32 @@ entrance_rings_still_active:
 			boss_phase = 5;
 
 			// Should be done during phase 6 initialization for clarity.
+			#ifndef THPRAC98_INJECTED
 			phase.u1.phase_6_pattern = 0;
+			#endif
 
 			boss_phase_frame = 0;
 		}
 	} else if(boss_phase == 5) {
 		phase.frame_common();
+		#ifdef THPRAC98_INJECTED
+		if (!thprac98::timelocked) {
+			thprac98::boss_phase_frame++;
+		}
+		#endif 
 		pattern_souls_drop_tears_and_move_diagonally();
 		pattern_two_crossed_eye_lasers();
 		hit.update_and_render(flash_colors);
+		#ifdef THPRAC98_INJECTED
+		if(!hit.invincible && (
+			(boss_hp <= HP_PHASE_5_END) || (thprac98::boss_phase_frame > 1600)
+		))
+		#else
 		if(!hit.invincible && (
 			(boss_hp <= HP_PHASE_5_END) || (boss_phase_frame > 1600)
-		)) {
+		))
+		#endif 
+		{
 			boss_phase = 6;
 			boss_phase_frame = 0;
 			hit.invincibility_frame = 0;
@@ -1136,13 +1201,27 @@ entrance_rings_still_active:
 		} else if(phase.u1.phase_6_pattern == 3) {
 			phase.u1.phase_6_pattern = pattern_vertical_lasers_from_top();
 		}
+		#ifdef THPRAC98_INJECTED
+		if (thprac98::p4_attack.value != 0) {
+			phase.u1.phase_6_pattern = thprac98::p4_attack.value - 1;
+		}
+		#endif 
 		if(boss_phase_frame == 0) {
 			phase.patterns_done++;
+			#ifdef THPRAC98_INJECTED
+			if (!thprac98::timelocked)
+				thprac98::boss_patterns_done++;
+			#endif 
 		}
 
 		// That's a well-hidden timeout condition! Especially since there is no
 		// corresponding HP rendering call to reflect this change in the HUD.
-		if(phase.patterns_done > 29) {
+		#ifdef THPRAC98_INJECTED
+		if(thprac98::boss_patterns_done > 29)
+		#else 
+		if(phase.patterns_done > 29)
+		#endif
+		 {
 			boss_hp = 1;
 		}
 
