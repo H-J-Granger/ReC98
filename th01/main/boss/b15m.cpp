@@ -2102,15 +2102,6 @@ void elis_main(void)
 		boss_phase = 1;
 		ent_still_or_wave.hitbox_orb_inactive = false;
 
-		// Necessary, since the entire entrance animation was only played on
-		// VRAM page 0...
-		graph_accesspage_func(1); ent_still_or_wave.unlock_put_lock_8();
-
-		// ... which makes this blitting call redundant, though.
-		graph_accesspage_func(0); ent_still_or_wave.unlock_put_lock_8();
-
-		phase.teleport_done = false;
-		phase.cur.pattern = 1;
 		#ifdef THPRAC98_INJECTED
 		if (thprac98::cur_ui_boss == UI_ELIS) {
 			if (thprac98::phase_slider.value != 1) {
@@ -2121,10 +2112,25 @@ void elis_main(void)
 				[thprac98::phase_slider.value - 1];
 			if (thprac98::phase_slider.value == 3) {
 				form = F_GIRL;
-				ent_still_or_wave.unput_8(C_STILL);
+				graph_accesspage_func(0);
 			}
 		}
+		if (!((thprac98::cur_ui_boss == UI_ELIS) &&
+			  (thprac98::phase_slider.value == 3))) {
+			graph_accesspage_func(1); ent_still_or_wave.unlock_put_lock_8();
+			graph_accesspage_func(0); ent_still_or_wave.unlock_put_lock_8();
+		}
+		#else
+		// Necessary, since the entire entrance animation was only played on
+		// VRAM page 0...
+		graph_accesspage_func(1); ent_still_or_wave.unlock_put_lock_8();
+
+		// ... which makes this blitting call redundant, though.
+		graph_accesspage_func(0); ent_still_or_wave.unlock_put_lock_8();
 		#endif
+
+		phase.teleport_done = false;
+		phase.cur.pattern = 1;
 		initial_hp_rendered = false;
 	} else if(boss_phase == 1) {
 		// ZUN bug: Since the fight only ends in Phase 5 at the earliest, HP
