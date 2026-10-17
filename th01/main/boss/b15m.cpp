@@ -1870,6 +1870,19 @@ void elis_main(void)
 			(boss_hp <= end_hp) && (phase.teleport_done == true) \
 		)
 
+		#ifdef THPRAC98_INJECTED
+		void next(int8_t phase_new, int pattern_new, int set_pattern = -1) {
+			boss_phase = phase_new;
+			boss_phase_frame = 0;
+			hit.invincibility_frame = 0;
+			if (set_pattern == -1) {
+				cur.pattern = pattern_new;
+			} else {
+				cur.patten = (set_pattern == 0 ? 1 : set_pattern) % 4;
+			}
+			teleport_done = false;
+		}
+		#else
 		void next(int8_t phase_new, int pattern_new) {
 			boss_phase = phase_new;
 			boss_phase_frame = 0;
@@ -1877,6 +1890,7 @@ void elis_main(void)
 			cur.pattern = pattern_new;
 			teleport_done = false;
 		}
+		#endif
 	} phase;
 	static pixel_t bat_velocity_y;
 	static pixel_t bat_velocity_x;
@@ -2130,7 +2144,13 @@ void elis_main(void)
 		#endif
 
 		phase.teleport_done = false;
+		#ifdef THPRAC98_INJECTED
+		phase.cur.pattern =
+			((thprac98::p1_attack.value == 0) ? 1 : thprac98::p1_attack.value) %
+			4;
+		#else
 		phase.cur.pattern = 1;
+		#endif
 		initial_hp_rendered = false;
 	} else if(boss_phase == 1) {
 		// ZUN bug: Since the fight only ends in Phase 5 at the earliest, HP
@@ -2152,7 +2172,11 @@ void elis_main(void)
 		if(phase.teleport_done == true) {
 			phase_3(99);
 
+			#ifdef THPRAC98_INJECTED
+			phase.next(3, 1, thprac98::p2_attack.value);
+			#else
 			phase.next(3, 1);
+			#endif
 		}
 	} else if(boss_phase == 3) {
 		phase_frame_common(3, phase_3, flash_colors);
