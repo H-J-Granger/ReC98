@@ -826,6 +826,11 @@ int near pattern_single_lasers_from_left_eye(void)
 int near pattern_souls_symmetric_rain_lines(void)
 {
 	if(boss_phase_frame > 100) {
+		#ifdef THPRAC98_INJECTED
+		if(boss_phase_frame == 101) {
+			select_for_rank(pattern_state.interval, 52, 56, 60, 64);
+		}
+		#else
 		// Yes, this condition can never be true here. This pattern always runs
 		// after pattern_single_lasers_from_left_eye(), so it reuses the
 		// [pattern_state] of that one (a laser speed), and reinterprets it as
@@ -833,6 +838,7 @@ int near pattern_souls_symmetric_rain_lines(void)
 		if(boss_phase_frame == 100) {
 			select_for_rank(pattern_state.interval, 35, 25, 23, 22);
 		}
+		#endif
 		if((boss_phase_frame % pattern_state.interval) == 0) {
 			for(int i = 0; i < SOUL_COUNT; i++) {
 				#define fire(i, angle, speed_base) { \
