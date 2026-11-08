@@ -382,6 +382,17 @@ void konngara_load_and_entrance(int8_t)
 	in_quarter = 0;
 	scroll_frame = 0;
 
+	#ifdef THPRAC98_SKIP_OPENING
+	#define index (thprac98::i)
+	for (index = 0; index < 24; ++index) {
+		((unsigned char*)(z_Palettes))[2 * index] =
+			(thprac98::kongara_palettes_after_decelerating_packed[index] & 0xF);
+		((unsigned char*)(z_Palettes))[2 * index + 1] =
+			(thprac98::kongara_palettes_after_decelerating_packed[index] >> 4);
+	}
+	goto skip_opening_part2;
+	#undef index	
+	#endif 
 	do {
 		z_vsync_wait_and_scrollup(line_on_top);
 		line_on_top += quarters_remaining;
@@ -416,6 +427,7 @@ void konngara_load_and_entrance(int8_t)
 	#undef quarters_remaining
 	// -------------------
 
+skip_opening_part2:;
 	z_vsync_wait_and_scrollup(0);
 	grz_load_single(0, GRZ_FN, 0);
 	grz_load_single(1, GRZ_FN, 1);
@@ -424,6 +436,13 @@ void konngara_load_and_entrance(int8_t)
 	grz_load_single(4, GRZ_FN, 4);
 	grz_load_single(5, GRZ_FN, 5);
 	grz_load_single(6, GRZ_FN, 6);
+
+	#ifdef THPRAC98_SKIP_OPENING
+	graph_accesspage_func(1);
+	graph_copy_accessed_page_to_other();
+	graph_accesspage_func(0);
+	goto skip_opening_part3;
+	#endif
 
 	frame_delay(40);
 
@@ -471,16 +490,24 @@ void konngara_load_and_entrance(int8_t)
 	// Flashing Siddhaṃ seed syllables
 	// -------------------------------
 
+skip_opening_part3:;
 	siddham_col_white();
 	grp_put_colorkey("boss8_d1.grp");
 	grp_put_colorkey("boss8_d2.grp");
 	grp_put_colorkey("boss8_d3.grp");
 	grp_put_colorkey("boss8_d4.grp");
 
+	#ifdef THPRAC98_SKIP_OPENING
+	z_Palettes[SIDDHAM_COL].c.r = 0x0;
+	z_Palettes[SIDDHAM_COL].c.g = 0x9;
+	z_Palettes[SIDDHAM_COL].c.b = 0xA;
+	z_palette_set_all_show(z_Palettes);
+	#else
 	for(j = 0; j < RGB4::Range; j++) {
 		siddham_col_white_in_step();
 		frame_delay(10);
 	}
+	#endif
 	graph_copy_accessed_page_to_other();
 	// -------------------------------
 }
@@ -1556,6 +1583,29 @@ void konngara_main(void)
 	face_direction_t fd_track;
 	const vc_t flash_colors[3] = { 3, 4, 5 };
 
+	#ifdef THPRAC98_INJECTED
+	#define pattern_choose( \
+		phase, frame_min, count_on_first_try, count_on_second_try, \
+		thprac98_timelock_counter, thprac98_attack_val \
+	) { \
+		if(boss_phase_frame > frame_min) { \
+			boss_phase_frame = 1; \
+			if(thprac98_attack_val == 0) { \
+				phase.pattern_cur = (irand() % count_on_first_try); \
+				if(phase.pattern_cur == pattern_prev) { \
+					phase.pattern_cur = (irand() % count_on_second_try); \
+				} \
+			} else { \
+				phase.pattern_cur = thprac98_attack_val - 1; \
+			} \
+			pattern_prev = phase.pattern_cur; \
+			phase.patterns_done++; \
+			if(thprac98::time_lock_state == false) { \
+				thprac98_timelock_counter++; \
+			} \
+		} \
+	}
+	#else
 	#define pattern_choose( \
 		phase, frame_min, count_on_first_try, count_on_second_try \
 	) { \
@@ -1569,6 +1619,7 @@ void konngara_main(void)
 			phase.patterns_done++; \
 		} \
 	}
+	#endif
 
 	#define phase_frame_siddham_flash(phase, next_phase) { \
 		if(boss_phase_frame == 50) { \
@@ -1585,7 +1636,14 @@ void konngara_main(void)
 	}
 
 	if(boss_phase == 0) {
+		#ifdef THPRAC98_INJECTED
+		boss_phase = thprac98::phase_slider.value * 2 - 1;
+		if (boss_phase != 1) {
+			thprac98::render_hp();
+		}
+		#else
 		boss_phase = 1;
+		#endif
 		pattern_prev = CHOOSE_NEW;
 		phase.pattern_cur = CHOOSE_NEW;
 		phase.patterns_done = 0;
@@ -1614,14 +1672,26 @@ void konngara_main(void)
 		} else if(phase.pattern_cur == 2) {
 			pattern_two_homing_snakes_and_semicircle_spreads();
 		} else if(phase.pattern_cur == CHOOSE_NEW) {
+			#ifdef THPRAC98_INJECTED
+			pattern_choose(phase, 120, 3, 3, 
+						   thprac98::kongara_p1_iterations_done,
+						   thprac98::p1_attack.value);
+			#else
 			pattern_choose(phase, 120, 3, 3);
+			#endif 
 		}
 		if(boss_phase_frame == 0) {
 			face_expression_set_and_put(FE_NEUTRAL);
 			phase.pattern_cur = CHOOSE_NEW;
 		}
 		hit.update_and_render(flash_colors);
-		if(!hit.invincible && ((phase.patterns_done >= 7) || (boss_hp < 16))) {
+		#ifdef THPRAC98_INJECTED
+		if (!hit.invincible &&
+			((thprac98::kongara_p1_iterations_done >= 7) || (boss_hp < 16)))
+		#else
+		if(!hit.invincible && ((phase.patterns_done >= 7) || (boss_hp < 16)))
+		#endif
+		{
 			if(phase.pattern_cur == CHOOSE_NEW) {
 				phase.next(2);
 			}
@@ -1641,7 +1711,13 @@ void konngara_main(void)
 		} else if(phase.pattern_cur == 3) {
 			pattern_rain_from_edges();
 		} else if(phase.pattern_cur == CHOOSE_NEW) {
+			#ifdef THPRAC98_INJECTED
+			pattern_choose(phase, 120, 4, 4, 
+						   thprac98::kongara_p2_iterations_done,
+						   thprac98::p2_attack.value);
+			#else
 			pattern_choose(phase, 120, 4, 4);
+			#endif
 		}
 
 		if(boss_phase_frame == 0) {
@@ -1650,7 +1726,13 @@ void konngara_main(void)
 		}
 
 		hit.update_and_render(flash_colors);
-		if(!hit.invincible && ((phase.patterns_done >= 9) || (boss_hp < 13))) {
+		#ifdef THPRAC98_INJECTED
+		if (!hit.invincible &&
+			((thprac98::kongara_p1_iterations_done >= 9) || (boss_hp < 13)))
+		#else
+		if(!hit.invincible && ((phase.patterns_done >= 9) || (boss_hp < 13)))
+		#endif
+		{
 			if(phase.pattern_cur == CHOOSE_NEW) {
 				phase.next(4);
 			}
@@ -1668,7 +1750,13 @@ void konngara_main(void)
 		} else if(phase.pattern_cur == 2) {
 			pattern_slash_triangular();
 		} else if(phase.pattern_cur == CHOOSE_NEW) {
+			#ifdef THPRAC98_INJECTED
+			pattern_choose(phase, 120, 3, 2, 
+						   thprac98::kongara_p3_iterations_done,
+						   thprac98::p3_attack.value);
+			#else
 			pattern_choose(phase, 120, 3, 2);
+			#endif
 		}
 
 		if(boss_phase_frame == 0) {
@@ -1677,7 +1765,13 @@ void konngara_main(void)
 		}
 
 		hit.update_and_render(flash_colors);
-		if(!hit.invincible && ((phase.patterns_done >= 6) || (boss_hp < 10))) {
+		#ifdef THPRAC98_INJECTED
+		if (!hit.invincible &&
+			((thprac98::kongara_p1_iterations_done >= 6) || (boss_hp < 10)))
+		#else
+		if(!hit.invincible && ((phase.patterns_done >= 6) || (boss_hp < 10)))
+		#endif
+		{
 			if(phase.pattern_cur == CHOOSE_NEW) {
 				phase.next(6);
 			}
@@ -1713,7 +1807,13 @@ void konngara_main(void)
 		} else if(phase.pattern_cur == 11) {
 			pattern_slash_aimed();
 		} else if(phase.pattern_cur == CHOOSE_NEW) {
+			#ifdef THPRAC98_INJECTED
+			int temp_dummy_var = 0;
+			pattern_choose(phase, 5, 12, 2, temp_dummy_var,
+						   thprac98::p4_attack.value);
+			#else
 			pattern_choose(phase, 5, 12, 2);
+			#endif 
 		}
 
 		if(boss_phase_frame == 0) {
