@@ -52,6 +52,30 @@ inline void pause_str_put(screen_x_t left, int line, const shiftjis_t* str) {
 	graph_putsa_fx(left, pause_top(line), (V_WHITE | FX_WEIGHT_BLACK), str);
 }
 
+#ifdef THPRAC98_INJECTED
+#define pause_select_loop(ret, sel_0_left, sel_1_left) { \
+	while(paused) { \
+		input_sense(false); \
+		if((input_shot == true) && (input_ok == true)) { \
+			return true; \
+		} \
+		if(input_lr == INPUT_LEFT) { \
+			pause_cursor_unput(sel_1_left); \
+			pause_cursor_put(sel_0_left, PAUSE_CURSOR); \
+			sel = 0; \
+		} \
+		if(input_lr == INPUT_RIGHT) { \
+			pause_cursor_unput(sel_0_left); \
+			pause_cursor_put(sel_1_left, PAUSE_CURSOR); \
+			sel = 1; \
+		} \
+		if(input_shot || input_ok) { \
+			break; \
+		} \
+		frame_delay(1); \
+	} \
+}
+#else
 #define pause_select_loop(ret, sel_0_left, sel_1_left) { \
 	while(paused) { \
 		input_sense(false); \
@@ -83,6 +107,7 @@ inline void pause_str_put(screen_x_t left, int line, const shiftjis_t* str) {
 		frame_delay(1); \
 	} \
 }
+#endif
 
 bool16 pause_menu(void)
 {
