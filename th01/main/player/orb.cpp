@@ -141,7 +141,12 @@ void pascal orb_and_pellets_and_stage_unput_update_render__vsync_wait(
 		cards_update_and_render();
 	}
 
-	if(!orb_in_portal && !player_is_hit) {
+	#ifdef THPRAC98_INJECTED
+	if(!orb_in_portal) 
+	#else
+	if(!orb_in_portal && !player_is_hit) 
+	#endif
+	{
 		ptn_put_8(orb_cur_left, orb_cur_top, orb_anim_cel());
 	}
 
