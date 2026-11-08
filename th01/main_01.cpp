@@ -809,6 +809,9 @@ int main(void)
 					pellet_speed_raise(0.025f);
 				}
 				input_sense(false);
+				#if defined(THPRAC98_INJECTED) && defined(THPRAC98_LOCK_RANK)
+				resident->pellet_speed = thprac98::rank_slider.value;
+				#endif 
 
 				if(player_invincibility_time > 1) {
 					player_invincibility_time--;
